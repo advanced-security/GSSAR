@@ -1,0 +1,182 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Transform: "AWS::Serverless-2016-10-31"
+
+Description: >
+  GSSR
+
+Resources: 
+
+  ### Log Groups ###
+
+  HttpApiAccessLogs: 
+    Type: "AWS::Logs::LogGroup"
+
+  SecretScannerStateMachineLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      RetentionInDays: 7
+
+  ### Lambda Functions ###
+
+  GitHubWebhookSecretValidator: 
+    Type: "AWS::Serverless::Function"
+    Properties: 
+      CodeUri: functions/githubWebhookSecretValidator
+      Description: "A Lambda that validates a GitHub Secret"
+      Environment: 
+        Variables: 
+          NODE_ENV: Production
+          REGION: !Ref "AWS::Region"
+      Handler: lib/main.handler
+      Policies:
+        - AmazonSSMReadOnlyAccess
+      Runtime: nodejs14.x
+      Timeout: 60
+      Tracing: Active
+
+  GitHubWebhookIPValidator:
+    Type: "AWS::Serverless::Function"
+    Properties: 
+      CodeUri: functions/githubWebhookIPValidator
+      Description: "A Lambda Function that validates the IP comes from GitHub"
+      Environment: 
+        Variables: 
+          NODE_ENV: Production
+          REGION: !Ref "AWS::Region"
+      Handler: lib/main.handler
+      Policies:
+        - AmazonSSMReadOnlyAccess
+      Runtime: nodejs14.x
+      Timeout: 60
+      Tracing: Active
+
+  ### API Gateways ###
+
+  HttpApi: 
+    Type: "AWS::Serverless::HttpApi"
+    Properties: 
+      AccessLogSettings: 
+        DestinationArn: !GetAtt HttpApiAccessLogs.Arn
+        Format: >-
+          { "requestId":"$context.requestId","ip": "$context.identity.sourceIp",
+          "requestTime":"$context.requestTime","httpMethod":"$context.httpMethod",
+          "routeKey":"$context.routeKey","status":"$context.status",
+          "protocol":"$context.protocol","responseLength":"$context.responseLength",
+          "error" : $context.authorizer.error }
+      Auth: 
+        Authorizers: 
+          LambdaAuthorizer: 
+            AuthorizerPayloadFormatVersion: "2.0"
+            EnableSimpleResponses: true
+            FunctionArn: !GetAtt GitHubWebhookIPValidator.Arn
+            FunctionInvokeRole: !GetAtt LambdaInvokeRole.Arn
+            Identity: 
+              Headers: 
+                - X-Hub-Signature
+        DefaultAuthorizer: LambdaAuthorizer
+      RouteSettings:
+        "POST /codescanning":
+          ThrottlingBurstLimit: 10
+      DefinitionBody:
+        info:
+          version: '1.0'
+          title:
+            Ref: AWS::StackName
+        paths:
+          "/gssr":
+            post:
+              responses: 
+                default:
+                  description: "Default response for POST /gssr"
+              x-amazon-apigateway-integration:
+                integrationSubtype: "StepFunctions-StartExecution"
+                credentials:
+                  Fn::GetAtt: [StepFunctionsApiRole, Arn]
+                requestParameters:
+                  Input: "$request.body"
+                  StateMachineArn: !Ref SecretScannerStateMachine
+                payloadFormatVersion: "2.0"
+                type: "aws_proxy"
+                connectionType: "INTERNET"
+                timeoutInMillis: 30000
+        openapi: 3.0.1
+        x-amazon-apigateway-importexport-version: "1.0"
+
+  ### IAM Roles & Policies ### 
+
+  StepFunctionsApiRole:
+    Type: 'AWS::IAM::Role'
+    Properties:
+      PermissionsBoundary: !Sub "arn:aws:iam::${AWS::AccountId}:policy/LZ-IAM-Boundary"
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+              - apigateway.amazonaws.com
+            Action:
+              - 'sts:AssumeRole'
+      Policies:
+      - PolicyName: AllowSFNExec
+        PolicyDocument:
+          Version: 2012-10-17
+          Statement:
+            - Effect: Allow
+              Action: "states:StartExecution"
+              Resource: !Ref SecretScannerStateMachine
+
+  LambdaInvokeRole:
+    Type: 'AWS::IAM::Role'
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - apigateway.amazonaws.com
+            Action:
+              - 'sts:AssumeRole'
+
+  LambdaInvokePolicy: 
+    Type: "AWS::IAM::Policy"
+    Properties: 
+      PolicyName: "LambdaInvokePolicy"
+      PolicyDocument: 
+        Version: "2012-10-17"
+        Statement: 
+          - Effect: "Allow"
+            Action: "lambda:InvokeFunction"
+            Resource: !GetAtt GitHubWebhookIPValidator.Arn
+      Roles: 
+        - Ref: "LambdaInvokeRole"
+
+  ### State Machines (Step Functions) ### 
+
+  SecretScannerStateMachine:
+    Type: AWS::Serverless::StateMachine
+    Properties:
+      DefinitionUri: stepfunctions/secretscanner.yml
+      DefinitionSubstitutions:
+        GitHubWebhookSecretValidatorFunctionArn: !GetAtt GitHubWebhookSecretValidator.Arn
+      Type: EXPRESS
+      Logging:
+        Destinations:
+          - CloudWatchLogsLogGroup:
+              LogGroupArn: !GetAtt SecretScannerStateMachineLogGroup.Arn
+        IncludeExecutionData: true
+        Level: ALL
+      PermissionsBoundary: !Sub "arn:aws:iam::${AWS::AccountId}:policy/LZ-IAM-Boundary"
+      Policies:
+        - LambdaInvokePolicy:
+            FunctionName: !Ref GitHubWebhookSecretValidator
+        - CloudWatchLogsFullAccess
+        
+Outputs:
+  HttpApiUrl:
+    Description: HTTP API URL
+    Value:
+      Fn::Sub: 'https://${HttpApi}.execute-api.${AWS::Region}.${AWS::URLSuffix}/'
+
+
