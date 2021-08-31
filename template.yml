@@ -98,7 +98,7 @@ Resources:
                 requestParameters:
                   Region:
                     Ref: AWS::Region
-                  Input: "$request"
+                  Input: "$"
                   StateMachineArn: 
                     Ref: SecretScannerStateMachine
                   Name:
