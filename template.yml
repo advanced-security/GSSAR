@@ -79,8 +79,6 @@ Resources:
         ThrottlingBurstLimit: 10
         ThrottlingRateLimit: 10
       DefinitionBody:
-        openapi: 3.0.1
-        x-amazon-apigateway-importexport-version: "1.0"
         info:
           version: '1.0'
           title:
@@ -90,25 +88,20 @@ Resources:
             post:
               responses: 
                 default:
-                  description: "Default response for POST /gssr"
+                  description: "Default response for POST /"
               x-amazon-apigateway-integration:
                 integrationSubtype: "StepFunctions-StartExecution"
                 credentials:
                   Fn::GetAtt: [StepFunctionsApiRole, Arn]
                 requestParameters:
-                  Region:
-                    Ref: AWS::Region
-                  Input: 
-                    $.body: "$request.body"
-                    $.header: "$request.header.x-hub-signature-256"
-                  StateMachineArn: 
-                    Ref: SecretScannerStateMachine
-                  Name:
-                    Fn::GetAtt: [SecretScannerStateMachine, Name]
-                payloadFormatVersion: "2.0"
+                  Input: "$request"
+                  StateMachineArn: !Ref SecretScannerStateMachine
+                payloadFormatVersion: "1.0"
                 type: "aws_proxy"
                 connectionType: "INTERNET"
                 timeoutInMillis: 30000
+        openapi: 3.0.1
+        x-amazon-apigateway-importexport-version: "1.0"
 
   ### IAM Roles & Policies ### 
 
