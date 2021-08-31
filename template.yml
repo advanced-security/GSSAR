@@ -98,7 +98,9 @@ Resources:
                 requestParameters:
                   Region:
                     Ref: AWS::Region
-                  Input: "$request"
+                  Input: 
+                    $.body: "$request.body"
+                    $.header: "$request.header.x-hub-signature-256"
                   StateMachineArn: 
                     Ref: SecretScannerStateMachine
                   Name:
