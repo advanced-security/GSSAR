@@ -166,7 +166,6 @@ Resources:
               LogGroupArn: !GetAtt SecretScannerStateMachineLogGroup.Arn
         IncludeExecutionData: true
         Level: ALL
-      PermissionsBoundary: !Sub "arn:aws:iam::${AWS::AccountId}:policy/LZ-IAM-Boundary"
       Policies:
         - LambdaInvokePolicy:
             FunctionName: !Ref GitHubWebhookSecretValidator
