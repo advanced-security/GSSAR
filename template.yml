@@ -74,9 +74,12 @@ Resources:
               Headers: 
                 - X-Hub-Signature
         DefaultAuthorizer: LambdaAuthorizer
-      RouteSettings:
-        "POST /codescanning":
-          ThrottlingBurstLimit: 10
+      DefaultRouteSettings:
+        DetailedMetricsEnabled: true
+        LoggingLevel: INFO
+        DataTraceEnabled: true
+        ThrottlingBurstLimit: 10
+        ThrottlingRateLimit: 10
       DefinitionBody:
         info:
           version: '1.0'
