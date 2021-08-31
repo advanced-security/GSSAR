@@ -76,8 +76,6 @@ Resources:
         DefaultAuthorizer: LambdaAuthorizer
       DefaultRouteSettings:
         DetailedMetricsEnabled: true
-        LoggingLevel: INFO
-        DataTraceEnabled: true
         ThrottlingBurstLimit: 10
         ThrottlingRateLimit: 10
       DefinitionBody:
