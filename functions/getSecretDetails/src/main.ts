@@ -15,8 +15,8 @@ export const handler = async (event: SecretScanningAlertCreatedEvent): Promise<r
   try {
     await ssm();
     const token = (await githubAuth()) as string;
-    const secret = (await getSecretInformation(token, number, name, login)) as string;
-    const response = { secret } as response
+    const secret = (await getSecretInformation(token, number, name, login)) as SecretDetailResponse;
+    const response = { ...secret, number, name, login } as response;
     return response;
   } catch (e: any) {
     console.error(e);

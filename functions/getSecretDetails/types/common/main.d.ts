@@ -20,8 +20,16 @@ interface hookIPAddress {
 }
 
 interface response {
-  secret: string
+  number: number;
+  name: string;
+  login: string;
+  secret: string;
+  secret_type: string | undefined;
+  html_url: string | undefined;
+  created_at: string | undefined;
 }
+
+interface SecretDetailResponse { secret: string, secret_type: string | undefined, html_url: string | undefined, created_at: string | undefined }
 
 interface SecretResponse {
   number: number;
