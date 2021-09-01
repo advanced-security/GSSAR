@@ -10,15 +10,15 @@ export const handler = async (
   try {
     await ssm();
 
-    const { status, message } = (await getUsernameOfAccessKeyID(event)) as response;
+    const { status, message } = (await getUsernameOfAccessKeyID(
+      event
+    )) as response;
 
-    if(status !== 200) 
-    return { statusCode: 500, body: message };
+    if (status !== 200) return { statusCode: 500, body: message };
 
     const result = (await checkIFSecretIsInAccount(event, message)) as response;
 
-    if(result.status !== 200) 
-      return { statusCode: 500, body: result.message };
+    if (result.status !== 200) return { statusCode: 500, body: result.message };
 
     return { statusCode: 200, body: "Success" };
   } catch (e: any) {
