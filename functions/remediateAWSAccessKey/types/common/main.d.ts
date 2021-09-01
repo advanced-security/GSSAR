@@ -20,16 +20,12 @@ interface response {
   status: number;
   message: string;
 }
-
-interface SecretResponse {
+interface InputFromStateMachine {
   number: number;
-  created_at: string;
-  url: string;
-  html_url: string;
-  state: string;
-  secret_type: string;
+  name: string;
+  login: string;
   secret: string;
-  resolution: string | null;
-  resolved_by: string | null;
-  resolved_at: string | null;
+  secret_type: string | undefined;
+  html_url: string | undefined;
+  created_at: string | undefined;
 }

@@ -46,6 +46,15 @@ Resources:
       Handler: lib/main.handler
       Policies:
         - AmazonSSMReadOnlyAccess
+        - Statement:
+          - Sid: IAMGet
+            Effect: Allow
+            Action:
+            - iam:ListAccessKeys
+            - iam:UpdateAccessKey
+            - iam:DeleteAccessKey
+            - iam:CreateAccessKey
+            Resource: '*'
       Runtime: nodejs14.x
       Timeout: 60
       Tracing: Active
