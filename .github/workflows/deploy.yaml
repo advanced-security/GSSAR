@@ -34,12 +34,22 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ env.REGION }}
       - run: |
-          cd ./functions/githubWebhookIPValidator 
+          cd ./functions/getSecretDetails 
           npm cache clean --force
           npm install
           npm run build
       - run: |
           cd ./functions/githubWebhookSecretValidator 
+          npm cache clean --force
+          npm install
+          npm run build
+      - run: |
+          cd ./functions/getSecretDetails 
+          npm cache clean --force
+          npm install
+          npm run build
+      - run: |
+          cd ./functions/remediateAWSAccessKey 
           npm cache clean --force
           npm install
           npm run build
