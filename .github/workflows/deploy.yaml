@@ -39,12 +39,12 @@ jobs:
           npm install
           npm run build
       - run: |
-          cd ./functions/githubWebhookSecretValidator 
+          cd ./functions/githubWebhookIPValidator 
           npm cache clean --force
           npm install
           npm run build
       - run: |
-          cd ./functions/getSecretDetails 
+          cd ./functions/githubWebhookSecretValidator 
           npm cache clean --force
           npm install
           npm run build
