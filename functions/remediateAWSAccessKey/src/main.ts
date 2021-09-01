@@ -1,6 +1,7 @@
 import { ssm } from "./ssm";
 import { APIGatewayProxyResultV2 } from "aws-lambda";
 import { checkIFSecretIsInAccount } from "./checkIFSecretIsInAccount";
+import { getUsernameOfAccessKeyID } from "./getUsernameOfAccessKeyID";
 
 export const handler = async (
   event: InputFromStateMachine
@@ -9,12 +10,15 @@ export const handler = async (
   try {
     await ssm();
 
-    const result = (await checkIFSecretIsInAccount(event)) as response;
+    const { status, message } = (await getUsernameOfAccessKeyID(event)) as response;
+
+    if(status !== 200) 
+    return { statusCode: 500, body: message };
+
+    const result = (await checkIFSecretIsInAccount(event, message)) as response;
 
     if(result.status !== 200) 
       return { statusCode: 500, body: result.message };
-
-
 
     return { statusCode: 200, body: "Success" };
   } catch (e: any) {

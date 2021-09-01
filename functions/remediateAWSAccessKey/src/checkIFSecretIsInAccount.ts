@@ -1,11 +1,11 @@
 import { IAMClient, ListAccessKeysCommand } from "@aws-sdk/client-iam";
 
-export const checkIFSecretIsInAccount = async ({secret}: InputFromStateMachine): Promise<response> => {
+export const checkIFSecretIsInAccount = async ({secret}: InputFromStateMachine, UserName: string): Promise<response> => {
   const region = process.env.REGION ? process.env.REGION : "us-east-1";
 
   try {
     const client = new IAMClient({ region });
-    const command = new ListAccessKeysCommand({});
+    const command = new ListAccessKeysCommand({ UserName });
     const { AccessKeyMetadata, IsTruncated, Marker } = await client.send(command); // TODO: Paginate
 
     if(IsTruncated)

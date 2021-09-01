@@ -54,6 +54,7 @@ Resources:
             - iam:UpdateAccessKey
             - iam:DeleteAccessKey
             - iam:CreateAccessKey
+            - iam:GetAccessKeyLastUsed
             Resource: '*'
       Runtime: nodejs14.x
       Timeout: 60
