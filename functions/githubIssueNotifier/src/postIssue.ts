@@ -20,7 +20,7 @@ export const postIssue = async (
       },
     });
 
-    const repoID = await graphqlWithAuth<GraphQlQueryResponseData>(
+    const { repository: { id: repositoryId }} = await graphqlWithAuth<GraphQlQueryResponseData>(
       `
       query FindRepo($owner: String!, $repo: String!) {
         repository(owner: $owner, name: $repo) {
@@ -32,8 +32,6 @@ export const postIssue = async (
         repo
       }
     );
-
-    console.log(repoID);
 
     const title = "Secret Auto Remediated"
 
@@ -48,7 +46,7 @@ export const postIssue = async (
         }
       }`,
       {
-        repositoryId: repoID.data.repository.id,
+        repositoryId,
         title,
         body
       }
