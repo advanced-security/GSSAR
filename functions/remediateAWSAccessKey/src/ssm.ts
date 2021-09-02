@@ -4,7 +4,7 @@ export const ssm = async (): Promise<void> => {
   const region = process.env.REGION ? process.env.REGION : "us-east-1";
   const client = new SSMClient({ region });
   const command = new GetParametersByPathCommand({
-    Path: "/codescanning",
+    Path: "/gssar",
     WithDecryption: true,
   });
 
@@ -13,7 +13,7 @@ export const ssm = async (): Promise<void> => {
 
     if (Parameters) {
       Parameters.forEach((param) => {
-        const name = param.Name ? param.Name.replace("/codescanning/", "") : "";
+        const name = param.Name ? param.Name.replace("/gssar/", "") : "";
         const value = param.Value ? param.Value : "";
         process.env[name] = value;
       });

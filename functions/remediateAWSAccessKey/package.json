@@ -33,7 +33,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/NickLiffen/CodeScanningToSlack"
+    "url": "https://github.com/NickLiffen/GSSAR"
   },
   "dependencies": {
     "@aws-sdk/client-iam": "^3.28.0",
