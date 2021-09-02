@@ -22,13 +22,13 @@ export const checkIFSecretIsInAccount = async (
     if (!AccessKeyMetadata)
       return { status: 404, message: "No Access Keys Found" };
 
-      console.log("AccessKeyMetadata", AccessKeyMetadata)
+    console.log("AccessKeyMetadata", AccessKeyMetadata);
 
     const secretFound = AccessKeyMetadata.some(
       (AccessKey) => AccessKey.AccessKeyId === secret
     );
 
-    console.log("secretFound", secretFound)
+    console.log("secretFound", secretFound);
 
     if (!secretFound)
       return {
@@ -37,7 +37,6 @@ export const checkIFSecretIsInAccount = async (
           "Access Key Discovered within Secret Scanning Alert Not Found Within List Of Access Keys in this Acconunt ",
       };
 
-    
     return { status: 200, message: "Key Found!" };
   } catch (err) {
     console.error("Error within function (checkIFSecretIsInAccount)", err);

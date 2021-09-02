@@ -23,10 +23,9 @@ export const getSecretInformation = async (
 
     console.log("secret", secret);
 
-    if(!secret) throw new Error("No Secret Found in API Response");
-    
-    return { secret, secret_type, html_url, created_at }
-    
+    if (!secret) throw new Error("No Secret Found in API Response");
+
+    return { secret, secret_type, html_url, created_at };
   } catch (err) {
     console.error("Error within function (getSecretInformation)", err);
     throw err;

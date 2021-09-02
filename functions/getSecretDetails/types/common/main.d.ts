@@ -29,7 +29,12 @@ interface response {
   created_at: string | undefined;
 }
 
-interface SecretDetailResponse { secret: string, secret_type: string | undefined, html_url: string | undefined, created_at: string | undefined }
+interface SecretDetailResponse {
+  secret: string;
+  secret_type: string | undefined;
+  html_url: string | undefined;
+  created_at: string | undefined;
+}
 
 interface SecretResponse {
   number: number;
@@ -43,4 +48,3 @@ interface SecretResponse {
   resolved_by: string | null;
   resolved_at: string | null;
 }
-

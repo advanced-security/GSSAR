@@ -4,7 +4,9 @@ import { SecretScanningAlertCreatedEvent } from "@octokit/webhooks-types";
 import { githubAuth } from "./getGitHubAppJWT";
 import { getSecretInformation } from "./getSecretInformation";
 
-export const handler = async (event: SecretScanningAlertCreatedEvent): Promise<response> => {
+export const handler = async (
+  event: SecretScanningAlertCreatedEvent
+): Promise<response> => {
   const {
     alert: { number },
     repository: {
@@ -15,7 +17,12 @@ export const handler = async (event: SecretScanningAlertCreatedEvent): Promise<r
   try {
     await ssm();
     const token = (await githubAuth()) as string;
-    const secret = (await getSecretInformation(token, number, name, login)) as SecretDetailResponse;
+    const secret = (await getSecretInformation(
+      token,
+      number,
+      name,
+      login
+    )) as SecretDetailResponse;
     const response = { ...secret, number, name, login } as response;
     return response;
   } catch (e: any) {

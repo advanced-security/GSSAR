@@ -29,7 +29,12 @@ interface response {
   created_at: string;
 }
 
-interface SecretDetailResponse { secret: string, secret_type: string | undefined, html_url: string | undefined, created_at: string | undefined }
+interface SecretDetailResponse {
+  secret: string;
+  secret_type: string | undefined;
+  html_url: string | undefined;
+  created_at: string | undefined;
+}
 
 interface InputFromStateMachine {
   number: number;

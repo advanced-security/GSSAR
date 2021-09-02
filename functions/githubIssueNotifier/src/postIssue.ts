@@ -1,4 +1,4 @@
-import { graphql } from "@octokit/graphql"
+import { graphql } from "@octokit/graphql";
 
 import type { GraphQlQueryResponseData } from "@octokit/graphql";
 
@@ -9,8 +9,13 @@ export const postIssue = async (
   event: InputFromStateMachine
 ): Promise<void> => {
   try {
-
-    const { name: repo, login: owner, html_url, created_at, secret_type } = event;
+    const {
+      name: repo,
+      login: owner,
+      html_url,
+      created_at,
+      secret_type,
+    } = event;
 
     const body = await message(repo, owner, html_url, created_at, secret_type);
 
@@ -20,7 +25,9 @@ export const postIssue = async (
       },
     });
 
-    const { repository: { id: repositoryId }} = await graphqlWithAuth<GraphQlQueryResponseData>(
+    const {
+      repository: { id: repositoryId },
+    } = await graphqlWithAuth<GraphQlQueryResponseData>(
       `
       query FindRepo($owner: String!, $repo: String!) {
         repository(owner: $owner, name: $repo) {
@@ -29,13 +36,13 @@ export const postIssue = async (
       }`,
       {
         owner,
-        repo
+        repo,
       }
     );
 
-    const title = "Secret Auto Remediated"
+    const title = "Secret Auto Remediated";
 
-    const issueID = await graphqlWithAuth(
+    const issueID = (await graphqlWithAuth(
       `
       mutation CreateIssue($repositoryId: String!, $title: String!, $body: String!) {
         createIssue(input: {repositoryId: $repositoryId, title: $title, body: $body}) {
@@ -48,15 +55,13 @@ export const postIssue = async (
       {
         repositoryId,
         title,
-        body
+        body,
       }
-    ) as GraphQlQueryResponseData;
+    )) as GraphQlQueryResponseData;
 
     console.log(issueID);
-
   } catch (err) {
     console.error("Error within function (getSecretInformation)", err);
     throw err;
   }
 };
-

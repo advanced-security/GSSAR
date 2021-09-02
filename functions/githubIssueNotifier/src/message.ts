@@ -1,6 +1,18 @@
+export const message = async (
+  repo: string,
+  owner: string,
+  html_url: string,
+  created_at: string,
+  secret_type: string
+): Promise<string> => {
+  const date = Date.now();
 
-export const message = async (repo: string, owner: string, html_url: string, created_at: string, secret_type: string): Promise<string> => {
-     return `
+  const fixedDate = new Intl.DateTimeFormat("en-GB", {
+    dateStyle: "full",
+    timeStyle: "long",
+  }).format(date);
+
+  return `
      Hey :wave. 
 
      This is an automated message from the GitHub Secret Scanning Auto Remediator Tool. 
@@ -13,10 +25,10 @@ export const message = async (repo: string, owner: string, html_url: string, cre
      - Owner: ${owner}
      - Secret URL: ${html_url}
      - Date Found: ${created_at}
-     - Date Remediated: ${Date.now()}
+     - Date Remediated: ${fixedDate}
 
      This may have some downstream consequences, so we reccommend you looking at the above URL and take any appropriate follow up.
 
      - Cheers,
-     GSSR`
+     GSSR`;
 };

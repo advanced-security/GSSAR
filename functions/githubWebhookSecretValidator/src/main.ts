@@ -17,7 +17,10 @@ export const handler = async (
         body: "Webhook secret provided does not match. unauthorized.",
       };
 
-    return { statusCode: 200, body: "Webhook secret provided does match. authorized." };
+    return {
+      statusCode: 200,
+      body: "Webhook secret provided does match. authorized.",
+    };
   } catch (e: any) {
     const body = e.message || "";
     console.error(e);

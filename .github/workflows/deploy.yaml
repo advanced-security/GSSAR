@@ -58,5 +58,10 @@ jobs:
           npm cache clean --force
           npm install
           npm run build
+      - run: |
+          cd ./functions/closeSecret
+          npm cache clean --force
+          npm install
+          npm run build
       - run: sam build --use-container
       - run: sam deploy --debug --no-confirm-changeset --no-fail-on-empty-changeset --stack-name GSSAR --capabilities CAPABILITY_IAM --region ${{ env.REGION }} --resolve-s3

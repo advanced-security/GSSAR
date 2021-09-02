@@ -92,6 +92,22 @@ Resources:
       Timeout: 60
       Tracing: Active
 
+  CloseSecret:
+    Type: "AWS::Serverless::Function"
+    Properties: 
+      CodeUri: functions/closeSecret
+      Description: "A Lambda function closes the GitHub Secret that has been remediated"
+      Environment: 
+        Variables: 
+          NODE_ENV: Production
+          REGION: !Ref "AWS::Region"
+      Handler: lib/main.handler
+      Policies:
+        - AmazonSSMReadOnlyAccess
+      Runtime: nodejs14.x
+      Timeout: 60
+      Tracing: Active
+      
   GitHubWebhookIPValidator:
     Type: "AWS::Serverless::Function"
     Properties: 
@@ -221,6 +237,7 @@ Resources:
         RemediateAWSAccessKeyFunctionArn: !GetAtt RemediateAWSAccessKey.Arn
         GetSecretDetailsFunctionArn: !GetAtt GetSecretDetails.Arn
         GitHubIssueNotifierFunctionArn: !GetAtt  GitHubIssueNotifier.Arn
+        CloseSecretFunctionArn: !GetAtt  CloseSecret.Arn
       Type: EXPRESS
       Logging:
         Destinations:
@@ -237,6 +254,8 @@ Resources:
             FunctionName: !Ref GetSecretDetails
         - LambdaInvokePolicy:
             FunctionName: !Ref GitHubIssueNotifier
+        - LambdaInvokePolicy:
+            FunctionName: !Ref CloseSecret
         - CloudWatchLogsFullAccess
         
 Outputs:
