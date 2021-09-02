@@ -30,5 +30,5 @@ export const message = async (
      This may have some downstream consequences, so we reccommend you looking at the above URL and take any appropriate follow up.
 
      - Cheers,
-     GSSR`;
+     GSSAR`;
 };

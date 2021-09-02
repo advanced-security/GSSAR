@@ -1,14 +1,14 @@
 # GitHub Secret Scanner Auto Remediator (GSSAR)
 
-Welcome to the GSSR Product! :wave:
+Welcome to the GSSAR Product! :wave:
 
 ## Overview 
 
-GSSR is an open-source initiative helping teams automatically revoke secrets discovered by [GitHub's Secret Scanning tool](https://docs.github.com/en/code-security/secret-scanning/about-secret-scanning).
+GSSAR is an open-source initiative helping teams automatically revoke secrets discovered by [GitHub's Secret Scanning tool](https://docs.github.com/en/code-security/secret-scanning/about-secret-scanning).
 
 Right now, whenever a new secret is discovered, you are notified straight away within the Secret Scanning tab. You can then make a conscious decision over whether to revoke the secret or mark it as a false positive, etc.
 
-With some secrets, it's okay not to take immediate action and only revoke after the right people have reviewed. However, for some other types of secrets (such as AWS Access Keys), more of an immediate (and automated) approach may be required in revoking these secrets. GSSR is an initiative to solve that use case. :rotating_light:
+With some secrets, it's okay not to take immediate action and only revoke after the right people have reviewed. However, for some other types of secrets (such as AWS Access Keys), more of an immediate (and automated) approach may be required in revoking these secrets. GSSAR is an initiative to solve that use case. :rotating_light:
 
 GitHub Secret Scanner Auto Remediator (GSSAR) is an initiative that revokes certain secret types automatically. GSSAR takes an agnostic approach to the kinds of secrets and leaves it up to each GitHub organization to decide what secret types should and should not be automatically revoked. 
 
@@ -157,11 +157,11 @@ GitHub Actions should now trigger! You can watch the workflow within the Actions
 - Building (SAM)
 - Deploying (SAM)
 
-The first time you deploy, it should take about 5-6 minutes. As long as the role you created in Step One has the correct permissions mentioned above, your deployment should succeed. Log into AWS, head to Cloud Formation, look for the `GSSR` stack, head to outputs, and you should see an output called: `HttpApiUrl`. Note down this URL. 
+The first time you deploy, it should take about 5-6 minutes. As long as the role you created in Step One has the correct permissions mentioned above, your deployment should succeed. Log into AWS, head to Cloud Formation, look for the `GSSAR` stack, head to outputs, and you should see an output called: `HttpApiUrl`. Note down this URL. 
 
 ### Step Six: Update GitHub App to send webhooks to the URL output from Step Five
 
-Head back to the GitHub App you created in Step Four. Head down to the Webhook URL, enter the URL from Step Five and add `/gssr` onto the end of the URI. The URL you got from the output is the domain, but not the full URI where webhooks should be sent. So make sure to put the `/gssr` endpoint onto that URL. 
+Head back to the GitHub App you created in Step Four. Head down to the Webhook URL, enter the URL from Step Five and add `/gssar` onto the end of the URI. The URL you got from the output is the domain, but not the full URI where webhooks should be sent. So make sure to put the `/gssar` endpoint onto that URL. 
 
 Click *Save* 
 
