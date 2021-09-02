@@ -18,10 +18,12 @@ Resources:
 
   ### Lambda Functions ###
 
+  ## Authorizers
+
   GitHubWebhookSecretValidator: 
     Type: "AWS::Serverless::Function"
     Properties: 
-      CodeUri: functions/githubWebhookSecretValidator
+      CodeUri: functions/authorizers/githubWebhookSecretValidator
       Description: "A Lambda that validates a GitHub Secret"
       Environment: 
         Variables: 
@@ -34,10 +36,78 @@ Resources:
       Timeout: 60
       Tracing: Active
 
+  GitHubWebhookIPValidator:
+    Type: "AWS::Serverless::Function"
+    Properties: 
+      CodeUri: functions/authorizers/githubWebhookIPValidator
+      Description: "A Lambda Function that validates the IP comes from GitHub"
+      Environment: 
+        Variables: 
+          NODE_ENV: Production
+          REGION: !Ref "AWS::Region"
+      Handler: lib/main.handler
+      Policies:
+        - AmazonSSMReadOnlyAccess
+      Runtime: nodejs14.x
+      Timeout: 60
+      Tracing: Active
+
+  ## Helpers  
+
+  GetSecretDetails:
+    Type: "AWS::Serverless::Function"
+    Properties: 
+      CodeUri: functions/helpers/getSecretDetails
+      Description: "A Lambda function that calls the GitHub API to return details about the given Secret in question"
+      Environment: 
+        Variables: 
+          NODE_ENV: Production
+          REGION: !Ref "AWS::Region"
+      Handler: lib/main.handler
+      Policies:
+        - AmazonSSMReadOnlyAccess
+      Runtime: nodejs14.x
+      Timeout: 60
+      Tracing: Active
+
+  GitHubIssueNotifier:
+    Type: "AWS::Serverless::Function"
+    Properties: 
+      CodeUri: functions/helpers/githubIssueNotifier
+      Description: "A Lambda function that creates a GitHub Issue to Notify the repository of the secret remediation"
+      Environment: 
+        Variables: 
+          NODE_ENV: Production
+          REGION: !Ref "AWS::Region"
+      Handler: lib/main.handler
+      Policies:
+        - AmazonSSMReadOnlyAccess
+      Runtime: nodejs14.x
+      Timeout: 60
+      Tracing: Active
+
+  CloseSecret:
+    Type: "AWS::Serverless::Function"
+    Properties: 
+      CodeUri: functions/helpers/closeSecret
+      Description: "A Lambda function closes the GitHub Secret that has been remediated"
+      Environment: 
+        Variables: 
+          NODE_ENV: Production
+          REGION: !Ref "AWS::Region"
+      Handler: lib/main.handler
+      Policies:
+        - AmazonSSMReadOnlyAccess
+      Runtime: nodejs14.x
+      Timeout: 60
+      Tracing: Active
+
+  ## Remediators
+
   RemediateAWSAccessKey:
     Type: "AWS::Serverless::Function"
     Properties: 
-      CodeUri: functions/remediateAWSAccessKey
+      CodeUri: functions/remediators/remediateAWSAccessKey
       Description: "A Lambda that remediated AWS Access Keys"
       Environment: 
         Variables: 
@@ -60,69 +130,6 @@ Resources:
       Timeout: 60
       Tracing: Active
 
-  GetSecretDetails:
-    Type: "AWS::Serverless::Function"
-    Properties: 
-      CodeUri: functions/getSecretDetails
-      Description: "A Lambda function that calls the GitHub API to return details about the given Secret in question"
-      Environment: 
-        Variables: 
-          NODE_ENV: Production
-          REGION: !Ref "AWS::Region"
-      Handler: lib/main.handler
-      Policies:
-        - AmazonSSMReadOnlyAccess
-      Runtime: nodejs14.x
-      Timeout: 60
-      Tracing: Active
-
-  GitHubIssueNotifier:
-    Type: "AWS::Serverless::Function"
-    Properties: 
-      CodeUri: functions/githubIssueNotifier
-      Description: "A Lambda function that creates a GitHub Issue to Notify the repository of the secret remediation"
-      Environment: 
-        Variables: 
-          NODE_ENV: Production
-          REGION: !Ref "AWS::Region"
-      Handler: lib/main.handler
-      Policies:
-        - AmazonSSMReadOnlyAccess
-      Runtime: nodejs14.x
-      Timeout: 60
-      Tracing: Active
-
-  CloseSecret:
-    Type: "AWS::Serverless::Function"
-    Properties: 
-      CodeUri: functions/closeSecret
-      Description: "A Lambda function closes the GitHub Secret that has been remediated"
-      Environment: 
-        Variables: 
-          NODE_ENV: Production
-          REGION: !Ref "AWS::Region"
-      Handler: lib/main.handler
-      Policies:
-        - AmazonSSMReadOnlyAccess
-      Runtime: nodejs14.x
-      Timeout: 60
-      Tracing: Active
-      
-  GitHubWebhookIPValidator:
-    Type: "AWS::Serverless::Function"
-    Properties: 
-      CodeUri: functions/githubWebhookIPValidator
-      Description: "A Lambda Function that validates the IP comes from GitHub"
-      Environment: 
-        Variables: 
-          NODE_ENV: Production
-          REGION: !Ref "AWS::Region"
-      Handler: lib/main.handler
-      Policies:
-        - AmazonSSMReadOnlyAccess
-      Runtime: nodejs14.x
-      Timeout: 60
-      Tracing: Active
 
   ### API Gateways ###
 
