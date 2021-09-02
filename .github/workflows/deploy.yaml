@@ -34,7 +34,7 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ env.REGION }}
       - run: |
-          cd ./functions/getSecretDetails 
+          cd ./functions/getSecretDetails
           npm cache clean --force
           npm install
           npm run build
@@ -50,6 +50,11 @@ jobs:
           npm run build
       - run: |
           cd ./functions/remediateAWSAccessKey 
+          npm cache clean --force
+          npm install
+          npm run build
+      - run: |
+          cd ./functions/githubIssueNotifier 
           npm cache clean --force
           npm install
           npm run build

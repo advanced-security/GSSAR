@@ -1,11 +1,10 @@
 import { ssm } from "./ssm";
-import { APIGatewayProxyResultV2 } from "aws-lambda";
 import { checkIFSecretIsInAccount } from "./checkIFSecretIsInAccount";
 import { getUsernameOfAccessKeyID } from "./getUsernameOfAccessKeyID";
 
 export const handler = async (
   event: InputFromStateMachine
-): Promise<APIGatewayProxyResultV2> => {
+): Promise<InputFromStateMachine> => {
   console.log(event);
   try {
     await ssm();
@@ -14,16 +13,15 @@ export const handler = async (
       event
     )) as response;
 
-    if (status !== 200) return { statusCode: 500, body: message };
+    if (status !== 200) throw Error(message);
 
     const result = (await checkIFSecretIsInAccount(event, message)) as response;
 
-    if (result.status !== 200) return { statusCode: 500, body: result.message };
+    if (result.status !== 200) throw Error(result.message);
 
-    return { statusCode: 200, body: "Success" };
+    return event as InputFromStateMachine;
   } catch (e: any) {
-    const body = e.message || "";
     console.error(e);
-    return { statusCode: 500, body };
+    throw Error(e.message);
   }
 };

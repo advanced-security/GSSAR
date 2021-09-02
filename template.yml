@@ -76,6 +76,22 @@ Resources:
       Timeout: 60
       Tracing: Active
 
+  GitHubIssueNotifier:
+    Type: "AWS::Serverless::Function"
+    Properties: 
+      CodeUri: functions/githubIssueNotifier
+      Description: "A Lambda function that creates a GitHub Issue to Notify the repository of the secret remediation"
+      Environment: 
+        Variables: 
+          NODE_ENV: Production
+          REGION: !Ref "AWS::Region"
+      Handler: lib/main.handler
+      Policies:
+        - AmazonSSMReadOnlyAccess
+      Runtime: nodejs14.x
+      Timeout: 60
+      Tracing: Active
+
   GitHubWebhookIPValidator:
     Type: "AWS::Serverless::Function"
     Properties: 
@@ -204,6 +220,7 @@ Resources:
         GitHubWebhookSecretValidatorFunctionArn: !GetAtt GitHubWebhookSecretValidator.Arn
         RemediateAWSAccessKeyFunctionArn: !GetAtt RemediateAWSAccessKey.Arn
         GetSecretDetailsFunctionArn: !GetAtt GetSecretDetails.Arn
+        GitHubIssueNotifierFunctionArn: !GetAtt  GitHubIssueNotifier.Arn
       Type: EXPRESS
       Logging:
         Destinations:
@@ -218,6 +235,8 @@ Resources:
             FunctionName: !Ref RemediateAWSAccessKey
         - LambdaInvokePolicy:
             FunctionName: !Ref GetSecretDetails
+        - LambdaInvokePolicy:
+            FunctionName: !Ref GitHubIssueNotifier
         - CloudWatchLogsFullAccess
         
 Outputs:
