@@ -1,6 +1,16 @@
 AWSTemplateFormatVersion: "2010-09-09"
 Transform: "AWS::Serverless-2016-10-31"
 
+Parameters:
+  StageName:
+    Type: String
+    Default: prod
+    AllowedValues:
+      - prod
+      - qa
+      - dev
+    Description: Enter the enviroment name
+
 Description: >
   GitHub Secret Scanner Auto Remediator (GSSAR) 
 
@@ -159,7 +169,15 @@ Resources:
         DetailedMetricsEnabled: true
         ThrottlingBurstLimit: 10
         ThrottlingRateLimit: 10
+      StageName: !Ref StageName
+      StageVariables:
+        Enviroment: !Ref StageName
+      RouteSettings:
+        "POST /github/secret":
+          ThrottlingBurstLimit: 20
       DefinitionBody:
+        openapi: 3.0.1
+        x-amazon-apigateway-importexport-version: "1.0"
         info:
           version: '1.0'
           title:
@@ -177,12 +195,10 @@ Resources:
                 requestParameters:
                   Input: "$request"
                   StateMachineArn: !Ref SecretScannerStateMachine
-                payloadFormatVersion: "1.0"
+                payloadFormatVersion: "2.0"
                 type: "aws_proxy"
                 connectionType: "INTERNET"
                 timeoutInMillis: 30000
-        openapi: 3.0.1
-        x-amazon-apigateway-importexport-version: "1.0"
 
   ### IAM Roles & Policies ### 
 

@@ -1,9 +1,10 @@
 import { ssm } from "./ssm";
-import { APIGatewayProxyEventV2, APIGatewayProxyResultV2 } from "aws-lambda";
+import { APIGatewayProxyResultV2 } from "aws-lambda";
 import { secretVerifier } from "./verify";
 
 export const handler = async (
-  event: APIGatewayProxyEventV2
+  event: any,
+  context: any
 ): Promise<APIGatewayProxyResultV2> => {
   console.log(event);
   try {
