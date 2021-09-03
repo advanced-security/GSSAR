@@ -161,7 +161,7 @@ Resources:
                 credentials:
                   Fn::GetAtt: [StepFunctionsApiRole, Arn]
                 requestParameters:
-                  Input: "$request"
+                  Input: "$request.body"
                   StateMachineArn: !Ref SecretScannerStateMachine
                 payloadFormatVersion: "1.0"
                 type: "aws_proxy"
