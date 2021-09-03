@@ -1,16 +1,6 @@
 AWSTemplateFormatVersion: "2010-09-09"
 Transform: "AWS::Serverless-2016-10-31"
 
-Parameters:
-  StageName:
-    Type: String
-    Default: prod
-    AllowedValues:
-      - prod
-      - qa
-      - dev
-    Description: Enter the enviroment name
-
 Description: >
   GitHub Secret Scanner Auto Remediator (GSSAR) 
 
