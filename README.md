@@ -2,6 +2,26 @@
 
 Welcome to the GSSAR Product! :wave:
 
+## Table of Contents  
+- [Overview](#overview)  
+- [How this works](#emphasis)  
+    - [Non-Technical](#emphasis)
+    - [Technical](#technical)
+- [Design](#design)  
+    - [Design Overview](#DesignOverview)
+    - [Technoligies Used](#emphasis)
+- [Pre-Reqs](#emphasis)
+- [Initial Installation](#emphasis)  
+    - [Step One: Create IAM User](#emphasis)
+    - [Step Two: Create and Configure GitHub App](#emphasis)
+    - [Step Three: Create Parameters within AWS Systems Manager (Parameter Store)](#emphasis)
+    - [Step Four: Deployment into AWS](#emphasis)
+    - [Step Five: Update GitHub App to send webhooks to the URL output from Step Five](#emphasis)
+- [Configuring Remediators](#emphasis)
+- [Issues and Feedback](#emphasis)
+- [Contributing](#contributing)
+- [FAQs](#faqs)
+
 ## Overview 
 
 GSSAR is an open-source initiative helping teams automatically revoke secrets discovered by [GitHub's Secret Scanning tool](https://docs.github.com/en/code-security/secret-scanning/about-secret-scanning).
@@ -28,7 +48,7 @@ Once the value has been collected, we then kick off a [Choice](https://docs.aws.
 
 If the secret within the `alert.secret_type` matches a secret type within the state machine, it will send the payload to a remediator. A remediator is a function that revokes a secret, custom to a type of secret. Once revoked, it will send the result back to the state machine, then mark that secret as closed within GitHub. Finally, once all steps are complete, it will run a [parallel](https://docs.aws.amazon.com/step-functions/latest/dg/amazon-states-language-parallel-state.html) step which notifies people the secret has been remediated. It informs by opening an issue on the repository where the secret was leaked. 
 
-## Technical Design
+## Design
 
 ### Overview
 
@@ -127,7 +147,7 @@ Once it's installed, we need to collect some information:
 4. App ID: Just above where you generated the client secret, you will see the App ID; take a note of the id. 
 5. Installation ID: The Installation ID is in a different location; head to your Organizations GitHub App's page (https://github.com/organizations/${orgName}/settings/installations). Click *Configure* next to the GitHub App you created. If you look at the URL, at the end of the URL, you will see a number. It should be after the `installations/` part of the URL. Copy down that number.
 
-### Step Four: Create Parameters within AWS Systems Manager (Parameter Store)
+### Step Three: Create Parameters within AWS Systems Manager (Parameter Store)
 
 Log into AWS, head to AWS Systems Manager, then AWS Parameter Store. In total, you will need to create seven parameters. 
 
@@ -140,7 +160,7 @@ Log into AWS, head to AWS Systems Manager, then AWS Parameter Store. In total, y
 
 **NOTE**: It is recommended you make the: `/GSSAR/APP_CLIENT_SECRET`, `/GSSAR/APP_PRIVATE_KEY`, `/GSSAR/GITHUB_WEBHOOKS_SECRET` values `SecureString` within Parameter Store. The rest can be `String` types. 
 
-### Step five: Deployment into AWS
+### Step Four: Deployment into AWS
 
 Second to last step! Before we do this, let's check a few things:
 
@@ -159,10 +179,67 @@ GitHub Actions should now trigger! You can watch the workflow within the Actions
 
 The first time you deploy, it should take about 5-6 minutes. As long as the role you created in Step One has the correct permissions mentioned above, your deployment should succeed. Log into AWS, head to Cloud Formation, look for the `GSSAR` stack, head to outputs, and you should see an output called: `HttpApiUrl`. Note down this URL. 
 
-### Step Six: Update GitHub App to send webhooks to the URL output from Step Five
+### Step Five: Update GitHub App to send webhooks to the URL output from Step Five
 
 Head back to the GitHub App you created in Step Four. Head down to the Webhook URL, enter the URL from Step Five and add `/gssar` onto the end of the URI. The URL you got from the output is the domain, but not the full URI where webhooks should be sent. So make sure to put the `/gssar` endpoint onto that URL. 
 
 Click *Save* 
 
 Done! From now on, whenever a Secret Scanning Alert gets: `created`, `fixed` and `closed_by_user`, an event will be fired to be processed. 
+
+## Configuring Remediators 
+
+Once you have installed GSSAR, you now have to configure your required remediators. There is an example remediator found within the `functions/remediators` directory. This remediator (as it is named) revokes AWS Access Keys. You are welcome to leave that remediator in if you would like to revoke AWS Access Keys in your environment, but you can also remove it. 
+
+The following steps need to be made when creating a new remediator:
+
+- Create a new directory within the `functions/remediators` directory (name it something logical). 
+- Within the folder you created, but the logic of the remediator. You can write it in whatever language your cloud provider allows. For AWS Lambda, you can build your remediator in any of these languages: [Runtimes](https://docs.aws.amazon.com/lambda/latest/dg/lambda-runtimes.html). 
+- Update the `.github/workflow/deploy.yaml` to include your remediator directory. (You can copy and paste a previous example and change the DIR name).
+- Update the `template.yml`. You will need to:
+    - Create a new `AWS::Serverless::Function`. You are welcome to copy and paste a previous example (e.g. `CloseSecret`). Update the `AWS::Serverless::StateMachine`. Within the `Policies`, add your function to a new `LambdaInvokePolicy` and in the `DefinitionSubstitutions` create a new substitution for your lambda. 
+- Update the `stepfunctions/secretscanner.yml`. You will need to:
+    - Create a new Task. To do this, copy and paste the `Remediate AWS Access Key ID` task. Name the task something suitable (e.g. Remediate XYZ). Update the `Resource` field within the task with the name you assigned in the `template.yml` (e.g. `AWS::Serverless::StateMachine` -> `DefinitionSubstitutions` section). 
+    - Add or update a new choice within the `Find Secret Type To Remediate` section. You can copy and paste the `"aws_access_key_id"` example. In the new choice, leave the `Variable` the same. Update the `StringEquals` field to the type of secret, and the `Next` field the name of the task you created in the previous step. 
+
+You can look at the code and copy and paste from previous examples.
+
+**Important**: Within your new remediator, the `event` object received by your lambda handler will be structured as the following: 
+
+```JSON
+{
+  "number": "number",       // The Secret Scanner Alert Number
+  "name": "string",         // The name of the GitHub Repository where the secret scanner alert was found. 
+  "login": "string",        // The name of the GitHub Organisation where the secret scanner alert was found. 
+  "secret": "string",       // The value of the Secret found. 
+  "secret_type": "string",  // The type of Secret found. 
+  "html_url": "string",     // The URL to the specific alert. 
+  "created_at": "string"    // When the GitHub Secret was discovered. 
+}
+```
+
+Within your remediator, use the provided values to revoke the secret. 
+
+On the success of remediation, return the same payload to the state machine that you received. This structure is required downstream within the state machine. 
+
+[throw an Error](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/throw) and the state machine will fail accordingly.
+
+## Issues and Feedback
+
+If you find any issues, or have any feedback regarding this initative, please open an [issue](https://github.com/NickLiffen/GSSAR/issues/new) on this repository. 
+
+## Contributing
+
+Please open an issue and let's discuss your thoughts on what can be made better. Then feel free to raise a pull request on this repository. This initative welcomes feedback from the community!
+
+## FAQ's
+
+### I don't use AWS!? How can I use this solution?
+
+Not a problem. The reason why AWS was chosen is due to the market popularity. However, we understand that not every company has AWS. The codebase will require some reconfiguration to meet whatever requirements your cloud/hosting provider has. The codebase structure can stay the same; you will likely have to change the `template.yml`, for example. However, a large part of the code within the `functions/*` directory can stay the same.
+
+I would advise if you don't use AWS. Use this codebase as a reference. It is a great template to *copy and paste* snippets from and put into your solution. 
+
+### I don't use GitHub Actions!? How can I use this solution?
+
+Again, not a problem. Take a look at the `.github/workflow/deploy.yaml` and translate that to whatever CI engine you are using. You shouldn't need to make any changes to the actual codebase, just the workflow file. 
