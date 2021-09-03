@@ -143,10 +143,10 @@ Resources:
 
   ### API Gateways ###
 
-  HttpApi: 
-    Type: "AWS::Serverless::HttpApi"
-    Properties: 
-      AccessLogSettings: 
+  HttpApi:
+    Type: AWS::Serverless::HttpApi
+    Properties:
+      AccessLogSettings:
         DestinationArn: !GetAtt HttpApiAccessLogs.Arn
         Format: >-
           { "requestId":"$context.requestId","ip": "$context.identity.sourceIp",
@@ -154,30 +154,8 @@ Resources:
           "routeKey":"$context.routeKey","status":"$context.status",
           "protocol":"$context.protocol","responseLength":"$context.responseLength",
           "error" : $context.authorizer.error }
-      Auth: 
-        Authorizers: 
-          LambdaAuthorizer: 
-            AuthorizerPayloadFormatVersion: "2.0"
-            EnableSimpleResponses: true
-            FunctionArn: !GetAtt GitHubWebhookIPValidator.Arn
-            FunctionInvokeRole: !GetAtt LambdaInvokeRole.Arn
-            Identity: 
-              Headers: 
-                - x-hub-signature-256
-        DefaultAuthorizer: LambdaAuthorizer
-      DefaultRouteSettings:
-        DetailedMetricsEnabled: true
-        ThrottlingBurstLimit: 10
-        ThrottlingRateLimit: 10
-      StageName: !Ref StageName
-      StageVariables:
-        Enviroment: !Ref StageName
-      RouteSettings:
-        "POST /github/secret":
-          ThrottlingBurstLimit: 20
+      FailOnWarnings: True
       DefinitionBody:
-        openapi: 3.0.1
-        x-amazon-apigateway-importexport-version: "1.0"
         info:
           version: '1.0'
           title:
@@ -193,12 +171,22 @@ Resources:
                 credentials:
                   Fn::GetAtt: [StepFunctionsApiRole, Arn]
                 requestParameters:
-                  Input: "$request"
+                  Input: "$request.body"
                   StateMachineArn: !Ref SecretScannerStateMachine
                 payloadFormatVersion: "1.0"
                 type: "aws_proxy"
                 connectionType: "INTERNET"
                 timeoutInMillis: 30000
+        openapi: 3.0.1
+        x-amazon-apigateway-importexport-version: "1.0"
+      Auth: 
+        Authorizers: 
+          LambdaAuthorizer: 
+            AuthorizerPayloadFormatVersion: "2.0"
+            EnableSimpleResponses: true
+            FunctionArn: !GetAtt GitHubWebhookIPValidator.Arn
+            FunctionInvokeRole: !GetAtt LambdaInvokeRole.Arn
+        DefaultAuthorizer: LambdaAuthorizer
 
   ### IAM Roles & Policies ### 
 
@@ -285,7 +273,7 @@ Outputs:
   HttpApiUrl:
     Description: URL of your API endpoint
     Value:
-      Fn::Sub: 'https://${HttpApi}.execute-api.${AWS::Region}.${AWS::URLSuffix}/${StageName}/'
+      Fn::Sub: 'https://${HttpApi}.execute-api.${AWS::Region}.${AWS::URLSuffix}/'
   HttpApiId:
     Description: Api id of HttpApi
     Value:
