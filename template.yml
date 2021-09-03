@@ -195,7 +195,7 @@ Resources:
                 requestParameters:
                   Input: "$request"
                   StateMachineArn: !Ref SecretScannerStateMachine
-                payloadFormatVersion: "2.0"
+                payloadFormatVersion: "1.0"
                 type: "aws_proxy"
                 connectionType: "INTERNET"
                 timeoutInMillis: 30000
