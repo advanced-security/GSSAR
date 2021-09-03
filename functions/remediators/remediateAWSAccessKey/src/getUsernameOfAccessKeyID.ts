@@ -21,10 +21,6 @@ export const getUsernameOfAccessKeyID = async ({
     return { status: 200, message: UserName };
   } catch (err) {
     console.error("Error within function (checkIFSecretIsInAccount)", err);
-    return {
-      status: 500,
-      message:
-        "Error Thrown! Go Get the getUsernameOfAccessKeyID module for errors. Guessing it's a permission error though!",
-    };
+    throw err;
   }
 };

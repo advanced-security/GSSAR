@@ -22,13 +22,9 @@ export const checkIFSecretIsInAccount = async (
     if (!AccessKeyMetadata)
       return { status: 404, message: "No Access Keys Found" };
 
-    console.log("AccessKeyMetadata", AccessKeyMetadata);
-
     const secretFound = AccessKeyMetadata.some(
       (AccessKey) => AccessKey.AccessKeyId === secret
     );
-
-    console.log("secretFound", secretFound);
 
     if (!secretFound)
       return {
@@ -40,10 +36,6 @@ export const checkIFSecretIsInAccount = async (
     return { status: 200, message: "Key Found!" };
   } catch (err) {
     console.error("Error within function (checkIFSecretIsInAccount)", err);
-    return {
-      status: 500,
-      message:
-        "Error Thrown! Go Get the checkIFSecretIsInAccount module for errors. Guessing it's a permission error though!",
-    };
+    throw err;
   }
 };

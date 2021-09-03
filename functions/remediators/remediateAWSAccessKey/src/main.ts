@@ -1,6 +1,7 @@
 import { ssm } from "./ssm";
 import { checkIFSecretIsInAccount } from "./checkIFSecretIsInAccount";
 import { getUsernameOfAccessKeyID } from "./getUsernameOfAccessKeyID";
+import { revokeAccessKeyID } from "./revokeAccessKeyID";
 
 export const handler = async (
   event: InputFromStateMachine
@@ -19,9 +20,11 @@ export const handler = async (
 
     if (result.status !== 200) throw Error(result.message);
 
+    await revokeAccessKeyID(event, message);
+
     return event as InputFromStateMachine;
-  } catch (e: any) {
-    console.error(e);
-    throw Error(e.message);
+  } catch (err: any) {
+    console.error(err);
+    throw err;
   }
 };
