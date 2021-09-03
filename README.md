@@ -3,6 +3,7 @@
 Welcome to the GSSAR Product! :wave:
 
 ## Table of Contents  
+
 - [Overview](#overview)  
 - [How this works](##how-this-works)  
     - [Non-Technical](#non-technical)
@@ -46,13 +47,13 @@ The state machine firstly goes and filters out the `resolved` and `reopened` eve
 
 Once the value has been collected, we then kick off a [Choice](https://docs.aws.amazon.com/step-functions/latest/dg/amazon-states-language-choice-state.html). This choice will look at the `alert.secret_type` and, based on the value, will decide to pass it onto a remediator or exit the state machine if the secret type isn't defined within the state machine. 
 
-If the secret within the `alert.secret_type` matches a secret type within the state machine, it will send the payload to a remediator. A remediator is a function that revokes a secret, custom to a type of secret. Once revoked, it will send the result back to the state machine, then mark that secret as closed within GitHub. Finally, once all steps are complete, it will run a [parallel](https://docs.aws.amazon.com/step-functions/latest/dg/amazon-states-language-parallel-state.html) step which notifies people the secret has been remediated. It informs by opening an issue on the repository where the secret was leaked. 
+If the secret within the `alert.secret_type` matches a secret type within the state machine, it will send the payload to a remediator. A remediator is a function that revokes a secret, custom to a type of secret. Once revoked, it will send the result back to the state machine, then mark that secret as closed within GitHub. Finally, once all steps are complete, it will run a final step which notifies people the secret has been remediated. It informs by opening an issue on the repository where the secret was leaked. 
 
 ## Design
 
 ### Design Overview
 
-The design has been implemented in a way to be very plug and play. Where you, as an organization, only have to focus on building remediators. The architecture can be found below:
+The design has been implemented in a way to be very plug and play. Where you, as an organization, only have to focus on building **remediators**. The architecture can be found below:
 
 ![GSSAR Architecture](https://lucid.app/publicSegments/view/8d88b9e4-3a03-4ba2-b2af-7c3abb54f45f/image.png)
 
@@ -66,9 +67,9 @@ For example, if a company wanted to remediate the following secret types automat
 - Amazon AWS Access Key ID
 - Google Cloud Private Key ID
 
-There would need to be three remediators. One for Dropbox, one for Amazon and one for Google. 
+There would need to be three remediators. One for Dropbox Access Tokens, one for Amazon AWS Access Keys and one for Google Cloud Private Keys. 
 
-The rest of the state machine (outside of remediators) is secret type agnostic. Meaning it will work for any current and future secret types. 
+The rest of the state machine (outside of remediators) is secret type agnostic. Meaning it will work for any current and future secret types. It is worth understanding how the rest of the design works, but you do not directly need to edit ot change anything outside of the remediators.
 
 ### Technoligies Used
 
