@@ -7,6 +7,7 @@ export const handler = async (
   context: any
 ): Promise<APIGatewayProxyResultV2> => {
   console.log(event);
+  console.log(context);
   try {
     await ssm();
 
