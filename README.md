@@ -4,21 +4,21 @@ Welcome to the GSSAR Product! :wave:
 
 ## Table of Contents  
 - [Overview](#overview)  
-- [How this works](#emphasis)  
-    - [Non-Technical](#emphasis)
+- [How this works](##how-this-works)  
+    - [Non-Technical](#non-technical)
     - [Technical](#technical)
 - [Design](#design)  
-    - [Design Overview](#DesignOverview)
-    - [Technoligies Used](#emphasis)
-- [Pre-Reqs](#emphasis)
-- [Initial Installation](#emphasis)  
-    - [Step One: Create IAM User](#emphasis)
-    - [Step Two: Create and Configure GitHub App](#emphasis)
-    - [Step Three: Create Parameters within AWS Systems Manager (Parameter Store)](#emphasis)
-    - [Step Four: Deployment into AWS](#emphasis)
-    - [Step Five: Update GitHub App to send webhooks to the URL output from Step Five](#emphasis)
-- [Configuring Remediators](#emphasis)
-- [Issues and Feedback](#emphasis)
+    - [Design Overview](#design-overview)
+    - [Technoligies Used](#technoligies-used)
+- [Pre-Reqs](#pre-reqs)
+- [Initial Installation](#initial-installation)  
+    - [Step One: Create IAM User](#step-one-create-iam-user)
+    - [Step Two: Create and Configure GitHub App](#step-two-create-and-configure-github-app)
+    - [Step Three: Create Parameters within AWS Systems Manager (Parameter Store)](#step-three-create-parameters-within-aws-systems-manager-parameter-store)
+    - [Step Four: Deployment into AWS](#step-four-deployment-into-aws)
+    - [Step Five: Update GitHub App to send webhooks to the URL output from Step Five](#step-five-update-github-app-to-send-webhooks-to-the-url-output-from-step-five)
+- [Configuring Remediators](#configuring-remediators)
+- [Issues and Feedback](#issues-and-feedback)
 - [Contributing](#contributing)
 - [FAQs](#faqs)
 
@@ -50,7 +50,7 @@ If the secret within the `alert.secret_type` matches a secret type within the st
 
 ## Design
 
-### Overview
+### Design Overview
 
 The design has been implemented in a way to be very plug and play. Where you, as an organization, only have to focus on building remediators. The architecture can be found below:
 
@@ -206,7 +206,7 @@ You can look at the code and copy and paste from previous examples.
 
 **Important**: Within your new remediator, the `event` object received by your lambda handler will be structured as the following: 
 
-```JSON
+```javascript
 {
   "number": "number",       // The Secret Scanner Alert Number
   "name": "string",         // The name of the GitHub Repository where the secret scanner alert was found. 
