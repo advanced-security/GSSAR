@@ -15,6 +15,7 @@ export const handler = async (
     const token = (await githubAuth()) as string;
     const ips = (await getGitHubIpRange(token)) as hookIPAddress;
     const isAuthorized = (await checkIPs(ips, sourceIP)) as boolean;
+    console.log(isAuthorized);
     return {
       isAuthorized,
     };
