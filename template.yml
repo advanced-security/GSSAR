@@ -245,7 +245,8 @@ Resources:
             Pattern:
               account: !Ref AWS::AccountId
               region: !Ref AWS::Region
-              resources: !GetAtt "GitHubWebhookSecretValidator.Arn"
+              resources: 
+                - !GetAtt "GitHubWebhookSecretValidator.Arn"
               source:
                 - custom.mySecretScanner
               detail-type:
