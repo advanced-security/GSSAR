@@ -3,9 +3,9 @@ name: Deploying GSSAR
 
 on:
   push:
-    branches: [ main ]
+    branches: [ ft/githubSecretWebhook ]
   pull_request:
-    branches: [ main ]
+    branches: [ ft/githubSecretWebhook ]
 
 jobs:
   build-deploy:

@@ -29,6 +29,13 @@ Resources:
         Variables: 
           NODE_ENV: Production
           REGION: !Ref "AWS::Region"
+      Events: 
+        GatewayEndpoint: 
+          Properties: 
+            ApiId: !Ref HttpApi
+            Method: POST
+            Path: /github/webhook/validate
+          Type: HttpApi
       Handler: lib/main.handler
       Policies:
         - AmazonSSMReadOnlyAccess
@@ -130,7 +137,46 @@ Resources:
       Timeout: 60
       Tracing: Active
 
+  GSSAREventBus: 
+    Type: AWS::Events::EventBus
+    Properties: 
+        Name: "GSSAREventBus"
 
+  GSSAREventBusPolicy: 
+    Type: AWS::Events::EventBusPolicy
+    Properties: 
+      EventBusName: !Ref "GSSAREventBus"
+      StatementId: "GSSAREventBusPolicy"
+      Statement:
+        Effect: "Allow"
+        Principal: !Ref "AWS::AccountId"
+        Action: "events:PutEvents"
+        Resource: !GetAtt "GSSAREventBus.Arn"
+
+  EventRuleCase1: 
+    Type: AWS::Events::Rule
+    Properties: 
+      Description: "Approved Requests"
+      EventBusName: !GetAtt "GSSAREventBus.Arn"
+      EventPattern: 
+        account: !Ref "AWS::AccountId"
+        region: !Ref "AWS::Region"
+        resources:
+          - !Fn::GetAtt "GitHubWebhookSecretValidator.Arn"
+        source: 
+          - "custom.mySecretScanner"
+        detail-type:
+          - transaction   
+      State: "ENABLED"
+      Targets: 
+        - 
+          Arn: 
+            Fn::GetAtt: 
+              - "SecretScannerStateMachine"
+              - "Arn"
+          Id: "SecretScannerStateMachine"
+      
+  
   ### API Gateways ###
 
   HttpApi:
@@ -145,30 +191,9 @@ Resources:
           "protocol":"$context.protocol","responseLength":"$context.responseLength",
           "error" : $context.authorizer.error }
       FailOnWarnings: True
-      DefinitionBody:
-        info:
-          version: '1.0'
-          title:
-            Ref: AWS::StackName
-        paths:
-          "/github/secret":
-            post:
-              responses: 
-                default:
-                  description: "Default response for POST /"
-              x-amazon-apigateway-integration:
-                integrationSubtype: "StepFunctions-StartExecution"
-                credentials:
-                  Fn::GetAtt: [StepFunctionsApiRole, Arn]
-                requestParameters:
-                  Input: "$request.body"
-                  StateMachineArn: !Ref SecretScannerStateMachine
-                payloadFormatVersion: "1.0"
-                type: "aws_proxy"
-                connectionType: "INTERNET"
-                timeoutInMillis: 30000
-        openapi: 3.0.1
-        x-amazon-apigateway-importexport-version: "1.0"
+      RouteSettings:
+        "POST /github/webhook/validate":
+          ThrottlingBurstLimit: 10
       Auth: 
         Authorizers: 
           LambdaAuthorizer: 
