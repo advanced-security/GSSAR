@@ -64,4 +64,4 @@ jobs:
           npm install
           npm run build
       - run: sam build --use-container
-      - run: sam deploy --debug --no-confirm-changeset --no-fail-on-empty-changeset --stack-name GSSAR --capabilities CAPABILITY_IAM --region ${{ env.REGION }} --resolve-s3
+      - run: sam deploy --debug --no-confirm-changeset --no-fail-on-empty-changeset --stack-name GSSAR-test-deployment --capabilities CAPABILITY_IAM --region ${{ env.REGION }} --resolve-s3

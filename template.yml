@@ -137,45 +137,12 @@ Resources:
       Timeout: 60
       Tracing: Active
 
+  ### Event Bus ###
+
   GSSAREventBus: 
     Type: AWS::Events::EventBus
     Properties: 
         Name: "GSSAREventBus"
-
-  GSSAREventBusPolicy: 
-    Type: AWS::Events::EventBusPolicy
-    Properties: 
-      EventBusName: !Ref "GSSAREventBus"
-      StatementId: "GSSAREventBusPolicy"
-      Statement:
-        Effect: "Allow"
-        Principal: !Ref "AWS::AccountId"
-        Action: "events:PutEvents"
-        Resource: !GetAtt "GSSAREventBus.Arn"
-
-  EventRuleCase1: 
-    Type: AWS::Events::Rule
-    Properties: 
-      Description: "Approved Requests"
-      EventBusName: !GetAtt "GSSAREventBus.Arn"
-      EventPattern: 
-        account: !Ref "AWS::AccountId"
-        region: !Ref "AWS::Region"
-        resources:
-          - !Fn::GetAtt "GitHubWebhookSecretValidator.Arn"
-        source: 
-          - "custom.mySecretScanner"
-        detail-type:
-          - transaction   
-      State: "ENABLED"
-      Targets: 
-        - 
-          Arn: 
-            Fn::GetAtt: 
-              - "SecretScannerStateMachine"
-              - "Arn"
-          Id: "SecretScannerStateMachine"
-      
   
   ### API Gateways ###
 
@@ -265,6 +232,26 @@ Resources:
         GitHubIssueNotifierFunctionArn: !GetAtt  GitHubIssueNotifier.Arn
         CloseSecretFunctionArn: !GetAtt  CloseSecret.Arn
       Type: EXPRESS
+      Events:
+        EBRule:
+          Type: EventBridgeRule
+          Properties:
+            EventBusName: !Ref GSSAREventBus
+            RetryPolicy:
+              MaximumRetryAttempts: 2
+            DeadLetterConfig:
+              Type: SQS
+              QueueLogicalId: SecretScannerDeadLetterQueue
+            Pattern:
+              account: !Ref AWS::AccountId
+              region: !Ref AWS::Region
+              resources:
+                - !Fn::GetAtt "GitHubWebhookSecretValidator.Arn"
+              source:
+                - custom.mySecretScanner
+              detail-type:
+                - transaction
+              
       Logging:
         Destinations:
           - CloudWatchLogsLogGroup:
