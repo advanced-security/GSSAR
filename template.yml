@@ -243,12 +243,14 @@ Resources:
               Type: SQS
               QueueLogicalId: SecretScannerDeadLetterQueue
             Pattern:
-              account: !Ref AWS::AccountId
-              region: !Ref AWS::Region
+              account: 
+                - !Ref AWS::AccountId
+              region: 
+                - !Ref AWS::Region
               resources: 
                 - !GetAtt "GitHubWebhookSecretValidator.Arn"
               source:
-                - custom.mySecretScanner
+                - custom.kickOffSecretScanRemediation
               detail-type:
                 - transaction
               
