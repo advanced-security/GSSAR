@@ -39,6 +39,8 @@ Resources:
       Handler: lib/main.handler
       Policies:
         - AmazonSSMReadOnlyAccess
+        - EventBridgePutEventsPolicy:
+            EventBusName: !Ref GSSAREventBus
       Runtime: nodejs14.x
       Timeout: 60
       Tracing: Active
