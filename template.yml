@@ -30,6 +30,7 @@ Resources:
           NODE_ENV: Production
           REGION: !Ref "AWS::Region"
           EVENT_BUS_NAME: !Ref GSSAREventBus
+          ACCOUNT_ID: !Ref "AWS::AccountId"
       Events: 
         GatewayEndpoint: 
           Properties: 

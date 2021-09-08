@@ -9,9 +9,11 @@ import {
 } from "@aws-sdk/client-eventbridge";
 
 export const handler = async (
-  event: APIGatewayProxyEventV2
+  event: APIGatewayProxyEventV2,
+  context: any
 ): Promise<APIGatewayProxyResultV2> => {
   console.log(event);
+  console.log(context);
 
   try {
     await ssm();
@@ -25,6 +27,9 @@ export const handler = async (
         {
           Source: "custom.kickOffSecretScanRemediation",
           EventBusName: process.env.EVENT_BUS_NAME,
+          region: process.env.REGION,
+          account: process.env.ACCOUNT_ID,
+          resources: [`${context.invokedFunctionArn}`],
           DetailType: "transaction",
           Time: new Date(),
           Detail: event.body,
