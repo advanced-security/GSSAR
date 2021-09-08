@@ -3,15 +3,18 @@ import { SecretScanningAlertCreatedEvent } from "@octokit/webhooks-types";
 
 import { githubAuth } from "./getGitHubAppJWT";
 import { getSecretInformation } from "./getSecretInformation";
+import { EventBridgeEvent } from "aws-lambda";
 
 export const handler = async (
-  event: SecretScanningAlertCreatedEvent
+  event: EventBridgeEvent<"transaction", SecretScanningAlertCreatedEvent>
 ): Promise<response> => {
   const {
-    alert: { number },
-    repository: {
-      name,
-      owner: { login },
+    detail: {
+      alert: { number },
+      repository: {
+        name,
+        owner: { login },
+      },
     },
   } = event;
   try {
