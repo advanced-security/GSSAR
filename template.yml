@@ -145,7 +145,7 @@ Resources:
   GSSAREventBus: 
     Type: AWS::Events::EventBus
     Properties: 
-        Name: "GSSAREventBus"
+        Name: !Join [ "-", [ GSSAR, !Ref AWS::StackName ] ]
   
   ### API Gateways ###
 
