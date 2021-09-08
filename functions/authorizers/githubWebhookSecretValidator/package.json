@@ -36,6 +36,7 @@
     "url": "https://github.com/NickLiffen/GSSAR"
   },
   "dependencies": {
+    "@aws-sdk/client-eventbridge": "^3.30.0",
     "@aws-sdk/client-ssm": "^3.26.0",
     "@octokit/auth-app": "^3.6.0",
     "@octokit/graphql": "^4.5.9",
