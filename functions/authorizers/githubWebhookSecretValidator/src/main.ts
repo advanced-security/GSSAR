@@ -5,6 +5,7 @@ import { secretVerifier } from "./verify";
 import {
   EventBridgeClient,
   PutEventsCommand,
+  PutEventsCommandOutput,
 } from "@aws-sdk/client-eventbridge";
 
 export const handler = async (
@@ -31,7 +32,11 @@ export const handler = async (
       ],
     };
 
+    console.log(input);
+
     const command = new PutEventsCommand(input);
+
+    console.log(response);
 
     if (!response)
       return {
@@ -39,17 +44,14 @@ export const handler = async (
         body: "Webhook secret provided does not match. unauthorized.",
       };
 
-    const { Entries } = await client.send(command);
+    const { FailedEntryCount, Entries } = (await client.send(
+      command
+    )) as PutEventsCommandOutput;
 
     console.log(Entries);
+    console.log(FailedEntryCount);
 
-    const checkKeyPresenceInArray = (key: string) => {
-      return (Entries) ? Entries.some((obj) => Object.keys(obj).includes(key)) : false;
-    };
-
-    const isKeyPresent = checkKeyPresenceInArray("ErrorCode");
-
-    if (isKeyPresent) {
+    if (!FailedEntryCount || FailedEntryCount > 0) {
       return {
         statusCode: 500,
         body: "Something went wrong. Please try again later.",
