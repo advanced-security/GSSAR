@@ -5,20 +5,26 @@ import { secretVerifier } from "./verify";
 import {
   EventBridgeClient,
   PutEventsCommand,
+  PutEventsCommandInput,
   PutEventsCommandOutput,
 } from "@aws-sdk/client-eventbridge";
 
 export const handler = async (
-  event: APIGatewayProxyEventV2,
-  context: any
+  event: APIGatewayProxyEventV2
 ): Promise<APIGatewayProxyResultV2> => {
-  console.log(event);
-  console.log(context);
-
   try {
     await ssm();
 
-    const response = (await secretVerifier(event)) as boolean;
+    const secretValidBool = (await secretVerifier(event)) as boolean;
+
+    console.log(`Is secret valid: ${secretValidBool}`);
+
+    if (!secretValidBool) {
+      return {
+        statusCode: 401,
+        body: "Webhook secret provided does not match. unauthorized.",
+      };
+    }
 
     const client = new EventBridgeClient({ region: process.env.REGION });
 
@@ -27,36 +33,24 @@ export const handler = async (
         {
           Source: "custom.kickOffSecretScanRemediation",
           EventBusName: process.env.EVENT_BUS_NAME,
-          region: process.env.REGION,
-          account: process.env.ACCOUNT_ID,
-          resources: [`${context.invokedFunctionArn}`],
           DetailType: "transaction",
           Time: new Date(),
           Detail: event.body,
         },
       ],
-    };
+    } as PutEventsCommandInput;
 
     console.log(input);
 
     const command = new PutEventsCommand(input);
 
-    console.log(response);
-
-    if (!response)
-      return {
-        statusCode: 401,
-        body: "Webhook secret provided does not match. unauthorized.",
-      };
-
-    const { FailedEntryCount, Entries } = (await client.send(
+    const { FailedEntryCount } = (await client.send(
       command
     )) as PutEventsCommandOutput;
 
-    console.log(Entries);
-    console.log(FailedEntryCount);
+    const count = FailedEntryCount as number;
 
-    if (!FailedEntryCount || FailedEntryCount > 0) {
+    if (count > 0) {
       return {
         statusCode: 500,
         body: "Something went wrong. Please try again later.",

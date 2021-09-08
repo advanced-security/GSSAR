@@ -30,7 +30,6 @@ Resources:
           NODE_ENV: Production
           REGION: !Ref "AWS::Region"
           EVENT_BUS_NAME: !Ref GSSAREventBus
-          ACCOUNT_ID: !Ref "AWS::AccountId"
       Events: 
         GatewayEndpoint: 
           Properties: 
@@ -247,17 +246,10 @@ Resources:
               Type: SQS
               QueueLogicalId: SecretScannerDeadLetterQueue
             Pattern:
-              account: 
-                - !Ref AWS::AccountId
-              region: 
-                - !Ref AWS::Region
-              resources: 
-                - !GetAtt "GitHubWebhookSecretValidator.Arn"
               source:
                 - custom.kickOffSecretScanRemediation
               detail-type:
-                - transaction
-              
+                - transaction         
       Logging:
         Destinations:
           - CloudWatchLogsLogGroup:
