@@ -2,12 +2,7 @@ import { ssm } from "./ssm";
 import { APIGatewayProxyEventV2, APIGatewayProxyResultV2 } from "aws-lambda";
 import { secretVerifier } from "./verify";
 
-import {
-  EventBridgeClient,
-  PutEventsCommand,
-  PutEventsCommandInput,
-  PutEventsCommandOutput,
-} from "@aws-sdk/client-eventbridge";
+import { put } from "./eventBridge";
 
 export const handler = async (
   event: APIGatewayProxyEventV2
@@ -26,31 +21,13 @@ export const handler = async (
       };
     }
 
-    const client = new EventBridgeClient({ region: process.env.REGION });
+    const errorCount = await put(event);
 
-    const input = {
-      Entries: [
-        {
-          Source: "custom.kickOffSecretScanRemediation",
-          EventBusName: process.env.EVENT_BUS_NAME,
-          DetailType: "transaction",
-          Time: new Date(),
-          Detail: event.body,
-        },
-      ],
-    } as PutEventsCommandInput;
+    console.log(
+      `Was there an error in sending the message? (Yes if > 0): ${errorCount}`
+    );
 
-    console.log(input);
-
-    const command = new PutEventsCommand(input);
-
-    const { FailedEntryCount } = (await client.send(
-      command
-    )) as PutEventsCommandOutput;
-
-    const count = FailedEntryCount as number;
-
-    if (count > 0) {
+    if (errorCount > 0) {
       return {
         statusCode: 500,
         body: "Something went wrong. Please try again later.",
