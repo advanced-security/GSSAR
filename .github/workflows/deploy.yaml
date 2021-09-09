@@ -15,7 +15,7 @@ name: Deploying GSSAR
       - hotfix/**
       - release/**
 jobs:
-  Lint Cloudformation:
+  Lint Cloud Formation:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -49,37 +49,37 @@ jobs:
           aws-access-key-id: '${{ secrets.AWS_ACCESS_KEY_ID }}'
           aws-secret-access-key: '${{ secrets.AWS_SECRET_ACCESS_KEY }}'
           aws-region: '${{ env.REGION }}'
-      - name: Install and Build Function: GithubWebhookIPValidator
+      - name: Install and Build Function (GithubWebhookIPValidator)
         run: |
           cd ./functions/authorizers/githubWebhookIPValidator 
           npm cache clean --force
           npm install
           npm run build
-      - name: Install and Build Function: GithubWebhookSecretValidator
+      - name: Install and Build Function (GithubWebhookSecretValidator)
         run: |
           cd ./functions/authorizers/githubWebhookSecretValidator 
           npm cache clean --force
           npm install
           npm run build
-      - name: Install and Build Function: GetSecretDetails
+      - name: Install and Build Function (GetSecretDetails)
         run: |
           cd ./functions/helpers/getSecretDetails
           npm cache clean --force
           npm install
           npm run build
-      - name: Install and Build Function: CloseSecret
+      - name: Install and Build Function (CloseSecret)
         run: |
           cd ./functions/helpers/closeSecret
           npm cache clean --force
           npm install
           npm run build
-      - name: Install and Build Function: GithubIssueNotifier
+      - name: Install and Build Function (GithubIssueNotifier)
         run: |
           cd ./functions/helpers/githubIssueNotifier 
           npm cache clean --force
           npm install
           npm run build
-      - name: Install and Build Function: RemediateAWSAccessKey
+      - name: Install and Build Function (RemediateAWSAccessKey)
         run: |
           cd ./functions/remediators/remediateAWSAccessKey 
           npm cache clean --force
