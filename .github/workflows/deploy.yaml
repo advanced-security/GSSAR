@@ -15,7 +15,7 @@ name: Deploying GSSAR
       - hotfix/**
       - release/**
 jobs:
-  cfn-lint:
+  Lint Cloudformation:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -25,7 +25,7 @@ jobs:
       - name: Print the Cloud Formation Linter Version & run Linter.
         run: |
           cfn-lint -t ./template.yml
-  deploy:
+  Deploy Stack:
     runs-on: ubuntu-latest
     env:
       REGION: us-east-1
@@ -41,15 +41,6 @@ jobs:
         uses: actions/setup-python@v2
         with:
           python-version: '3.8'
-      - name: Get Branch
-        id: extract_branch
-        shell: bash
-        run: |
-          branch=$(git rev-parse --abbrev-ref HEAD)
-          echo "Current branch is: $branch"
-          formattedBranch=$(echo $branch | sed -e 's/\//-/g')
-          echo "Formatted branch is: $formattedBranch"
-          echo '::set-output name=FORMATTED_BRANCH::$formattedBranch'
       - name: Setup AWS SAM
         uses: aws-actions/setup-sam@v1
       - name: Configure AWS Credentials
@@ -58,38 +49,60 @@ jobs:
           aws-access-key-id: '${{ secrets.AWS_ACCESS_KEY_ID }}'
           aws-secret-access-key: '${{ secrets.AWS_SECRET_ACCESS_KEY }}'
           aws-region: '${{ env.REGION }}'
-      - run: |
+      - name: Install and Build Function: GithubWebhookIPValidator
+        run: |
           cd ./functions/authorizers/githubWebhookIPValidator 
           npm cache clean --force
           npm install
           npm run build
-      - run: |
+      - name: Install and Build Function: GithubWebhookSecretValidator
+        run: |
           cd ./functions/authorizers/githubWebhookSecretValidator 
           npm cache clean --force
           npm install
           npm run build
-      - run: |
+      - name: Install and Build Function: GetSecretDetails
+        run: |
           cd ./functions/helpers/getSecretDetails
           npm cache clean --force
           npm install
           npm run build
-      - run: |
+      - name: Install and Build Function: CloseSecret
+        run: |
           cd ./functions/helpers/closeSecret
           npm cache clean --force
           npm install
           npm run build
-      - run: |
+      - name: Install and Build Function: GithubIssueNotifier
+        run: |
           cd ./functions/helpers/githubIssueNotifier 
           npm cache clean --force
           npm install
           npm run build
-      - run: |
+      - name: Install and Build Function: RemediateAWSAccessKey
+        run: |
           cd ./functions/remediators/remediateAWSAccessKey 
           npm cache clean --force
           npm install
           npm run build
-      - run: sam build --use-container
+      - name: SAM Build
+        run: sam build --use-container
+      - name: Set Stack Name
+        id: stack-name
+        shell: bash
+        run: |
+          branch=$(git rev-parse --abbrev-ref HEAD)
+          echo "Current branch is: $branch"
+          formattedBranch=$(echo $branch | sed -e 's/\//-/g')
+          echo "Formatted branch is: $formattedBranch"
+          stackName="gssar-$formattedBranch"
+          echo '::set-output name=FORMATTED_BRANCH::$stackName'
+      - name: Echo Stack Name
+        shell: bash
+        run: |
+          echo "Stack Name: ${{ steps.stack-name.outputs.FORMATTED_BRANCH }}"
+      - name: SAM Deploy
       - run: >-
           sam deploy --debug --no-confirm-changeset --no-fail-on-empty-changeset
-          --stack-name GSSAR-${{ steps.get-branch.outputs.FORMATTED_BRANCH }}
+          --stack-name ${{ steps.stack-name.outputs.FORMATTED_BRANCH }}
           --capabilities CAPABILITY_IAM --region ${{ env.REGION }} --resolve-s3
