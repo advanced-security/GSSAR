@@ -96,4 +96,4 @@ jobs:
           echo "Formatted branch is: $formattedBranch"
           stackName="gssar-$formattedBranch"
           echo "Stack name: $stackName"
-          sam deploy --debug --no-confirm-changeset --no-fail-on-empty-changeset --stack-name ${ echo $stackName } --capabilities CAPABILITY_IAM --region ${{ env.REGION }} --resolve-s3
+          sam deploy --debug --no-confirm-changeset --no-fail-on-empty-changeset --stack-name ${{ echo $stackName }} --capabilities CAPABILITY_IAM --region ${{ env.REGION }} --resolve-s3
