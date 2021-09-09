@@ -96,7 +96,7 @@ jobs:
           formattedBranch=$(echo $branch | sed -e 's/\//-/g')
           echo "Formatted branch is: $formattedBranch"
           stackName="gssar-$formattedBranch"
-          echo '::set-output name=FORMATTED_BRANCH::$stackName'
+          echo '::set-output name=FORMATTED_BRANCH::$(echo $stackName)'
       - name: Echo Stack Name
         shell: bash
         run: |
