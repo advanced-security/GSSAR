@@ -1,67 +1,32 @@
-
 name: Deploying GSSAR
-
-on:
+'on':
   push:
-    branches: [ ft/githubSecretWebhook ]
+    branches:
+      - main
+      - ft/**
+      - bug/**
+      - hotfix/**
+      - release/**
   pull_request:
-    branches: [ ft/githubSecretWebhook ]
-
+    branches:
+      - main
+      - ft/**
+      - bug/**
+      - hotfix/**
+      - release/**
 jobs:
-  build-deploy:
+  get-branch-name:
     runs-on: ubuntu-latest
-    env:
-      REGION: us-east-1
-    environment: main
+    outputs:
+      branch: '${{ steps.extract_branch.outputs.branch }}'
     steps:
       - uses: actions/checkout@v2
-      - uses: actions/setup-node@v2
-        with:
-          node-version: '14'
-      - uses: actions/setup-python@v2
-        with:
-          python-version: "3.8"
-      - name: Setup Cloud Formation Linter with Latest Version
-        uses: scottbrenner/cfn-lint-action@v2
-      - name: Print the Cloud Formation Linter Version & Run Linter.
-        run: |
-          cfn-lint --version
-          cfn-lint -t ./template.yml
-      - uses: aws-actions/setup-sam@v1
-      - uses: aws-actions/configure-aws-credentials@v1
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{ env.REGION }}
-      - run: |
-          cd ./functions/authorizers/githubWebhookIPValidator 
-          npm cache clean --force
-          npm install
-          npm run build
-      - run: |
-          cd ./functions/authorizers/githubWebhookSecretValidator 
-          npm cache clean --force
-          npm install
-          npm run build
-      - run: |
-          cd ./functions/helpers/getSecretDetails
-          npm cache clean --force
-          npm install
-          npm run build
-      - run: |
-          cd ./functions/helpers/closeSecret
-          npm cache clean --force
-          npm install
-          npm run build
-      - run: |
-          cd ./functions/helpers/githubIssueNotifier 
-          npm cache clean --force
-          npm install
-          npm run build
-      - run: |
-          cd ./functions/remediators/remediateAWSAccessKey 
-          npm cache clean --force
-          npm install
-          npm run build
-      - run: sam build --use-container
-      - run: sam deploy --debug --no-confirm-changeset --no-fail-on-empty-changeset --stack-name GSSAR-test-deployment --capabilities CAPABILITY_IAM --region ${{ env.REGION }} --resolve-s3
+      - name: Extract branch name
+        shell: bash
+        run: 'echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"'
+        id: extract_branch
+  job2:
+    runs-on: ubuntu-latest
+    needs: get-branch-name
+    steps:
+      - run: 'echo ${{needs.get-branch-name.outputs.branch}}'
