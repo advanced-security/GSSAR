@@ -102,7 +102,7 @@ jobs:
         run: |
           echo "Stack Name: ${{ steps.stack-name.outputs.FORMATTED_BRANCH }}"
       - name: SAM Deploy
-      - run: >-
+        run: >-
           sam deploy --debug --no-confirm-changeset --no-fail-on-empty-changeset
           --stack-name ${{ steps.stack-name.outputs.FORMATTED_BRANCH }}
           --capabilities CAPABILITY_IAM --region ${{ env.REGION }} --resolve-s3
