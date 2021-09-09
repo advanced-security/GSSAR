@@ -29,9 +29,19 @@ Resources:
         Variables: 
           NODE_ENV: Production
           REGION: !Ref "AWS::Region"
+          EVENT_BUS_NAME: !Ref GSSAREventBus
+      Events: 
+        GatewayEndpoint: 
+          Properties: 
+            ApiId: !Ref HttpApi
+            Method: POST
+            Path: /github/webhook/validate
+          Type: HttpApi
       Handler: lib/main.handler
       Policies:
         - AmazonSSMReadOnlyAccess
+        - EventBridgePutEventsPolicy:
+            EventBusName: !Ref GSSAREventBus
       Runtime: nodejs14.x
       Timeout: 60
       Tracing: Active
@@ -130,7 +140,13 @@ Resources:
       Timeout: 60
       Tracing: Active
 
+  ### Event Bus ###
 
+  GSSAREventBus: 
+    Type: AWS::Events::EventBus
+    Properties: 
+        Name: !Join [ "-", [ GSSAR, !Ref AWS::StackName ] ]
+  
   ### API Gateways ###
 
   HttpApi:
@@ -145,30 +161,9 @@ Resources:
           "protocol":"$context.protocol","responseLength":"$context.responseLength",
           "error" : $context.authorizer.error }
       FailOnWarnings: True
-      DefinitionBody:
-        info:
-          version: '1.0'
-          title:
-            Ref: AWS::StackName
-        paths:
-          "/github/secret":
-            post:
-              responses: 
-                default:
-                  description: "Default response for POST /"
-              x-amazon-apigateway-integration:
-                integrationSubtype: "StepFunctions-StartExecution"
-                credentials:
-                  Fn::GetAtt: [StepFunctionsApiRole, Arn]
-                requestParameters:
-                  Input: "$request.body"
-                  StateMachineArn: !Ref SecretScannerStateMachine
-                payloadFormatVersion: "1.0"
-                type: "aws_proxy"
-                connectionType: "INTERNET"
-                timeoutInMillis: 30000
-        openapi: 3.0.1
-        x-amazon-apigateway-importexport-version: "1.0"
+      RouteSettings:
+        "POST /github/webhook/validate":
+          ThrottlingBurstLimit: 10
       Auth: 
         Authorizers: 
           LambdaAuthorizer: 
@@ -240,6 +235,21 @@ Resources:
         GitHubIssueNotifierFunctionArn: !GetAtt  GitHubIssueNotifier.Arn
         CloseSecretFunctionArn: !GetAtt  CloseSecret.Arn
       Type: EXPRESS
+      Events:
+        EBRule:
+          Type: EventBridgeRule
+          Properties:
+            EventBusName: !Ref GSSAREventBus
+            RetryPolicy:
+              MaximumRetryAttempts: 2
+            DeadLetterConfig:
+              Type: SQS
+              QueueLogicalId: SecretScannerDeadLetterQueue
+            Pattern:
+              source:
+                - custom.kickOffSecretScanRemediation
+              detail-type:
+                - transaction         
       Logging:
         Destinations:
           - CloudWatchLogsLogGroup:

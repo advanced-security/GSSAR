@@ -1,67 +1,82 @@
-
 name: Deploying GSSAR
-
-on:
+'on':
   push:
-    branches: [ main ]
-  pull_request:
-    branches: [ main ]
-
+    branches:
+      - main
+      - ft/**
+      - bug/**
+      - hotfix/**
+      - release/**
 jobs:
-  build-deploy:
+  DeployStack:
     runs-on: ubuntu-latest
     env:
       REGION: us-east-1
     environment: main
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-node@v2
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Setup NodeJS
+        uses: actions/setup-node@v2
         with:
           node-version: '14'
-      - uses: actions/setup-python@v2
+      - name: Setup Python
+        uses: actions/setup-python@v2
         with:
-          python-version: "3.8"
-      - name: Setup Cloud Formation Linter with Latest Version
-        uses: scottbrenner/cfn-lint-action@v2
-      - name: Print the Cloud Formation Linter Version & Run Linter.
+          python-version: '3.8'
+      - name: Setup AWS SAM
+        uses: aws-actions/setup-sam@v1
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: '${{ secrets.AWS_ACCESS_KEY_ID }}'
+          aws-secret-access-key: '${{ secrets.AWS_SECRET_ACCESS_KEY }}'
+          aws-region: '${{ env.REGION }}'
+      - name: Install and Build Function (GithubWebhookIPValidator)
         run: |
-          cfn-lint --version
-          cfn-lint -t ./template.yml
-      - uses: aws-actions/setup-sam@v1
-      - uses: aws-actions/configure-aws-credentials@v1
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{ env.REGION }}
-      - run: |
           cd ./functions/authorizers/githubWebhookIPValidator 
           npm cache clean --force
           npm install
           npm run build
-      - run: |
+      - name: Install and Build Function (GithubWebhookSecretValidator)
+        run: |
           cd ./functions/authorizers/githubWebhookSecretValidator 
           npm cache clean --force
           npm install
           npm run build
-      - run: |
+      - name: Install and Build Function (GetSecretDetails)
+        run: |
           cd ./functions/helpers/getSecretDetails
           npm cache clean --force
           npm install
           npm run build
-      - run: |
+      - name: Install and Build Function (CloseSecret)
+        run: |
           cd ./functions/helpers/closeSecret
           npm cache clean --force
           npm install
           npm run build
-      - run: |
+      - name: Install and Build Function (GithubIssueNotifier)
+        run: |
           cd ./functions/helpers/githubIssueNotifier 
           npm cache clean --force
           npm install
           npm run build
-      - run: |
+      - name: Install and Build Function (RemediateAWSAccessKey)
+        run: |
           cd ./functions/remediators/remediateAWSAccessKey 
           npm cache clean --force
           npm install
           npm run build
-      - run: sam build --use-container
-      - run: sam deploy --debug --no-confirm-changeset --no-fail-on-empty-changeset --stack-name GSSAR --capabilities CAPABILITY_IAM --region ${{ env.REGION }} --resolve-s3
+      - name: SAM Build
+        run: sam build --use-container
+      - name: SAM Deploy
+        shell: bash
+        run: |
+          branch=$(git rev-parse --abbrev-ref HEAD)
+          echo "Current branch is: $branch"
+          formattedBranch=$(echo $branch | sed -e 's/\//-/g')
+          echo "Formatted branch is: $formattedBranch"
+          stackName="gssar-$formattedBranch"
+          echo "Stack name: $stackName"
+          sam deploy --debug --no-confirm-changeset --no-fail-on-empty-changeset --stack-name "$stackName" --capabilities CAPABILITY_IAM --region ${{ env.REGION }} --resolve-s3
