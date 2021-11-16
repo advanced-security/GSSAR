@@ -42,7 +42,7 @@ Resources:
         - AmazonSSMReadOnlyAccess
         - EventBridgePutEventsPolicy:
             EventBusName: !Ref GSSAREventBus
-      Runtime: nodejs14.x
+      Runtime: nodejs16.x
       Timeout: 60
       Tracing: Active
 
@@ -58,7 +58,7 @@ Resources:
       Handler: lib/main.handler
       Policies:
         - AmazonSSMReadOnlyAccess
-      Runtime: nodejs14.x
+      Runtime: nodejs16.x
       Timeout: 60
       Tracing: Active
 
@@ -76,7 +76,7 @@ Resources:
       Handler: lib/main.handler
       Policies:
         - AmazonSSMReadOnlyAccess
-      Runtime: nodejs14.x
+      Runtime: nodejs16.x
       Timeout: 60
       Tracing: Active
 
@@ -92,7 +92,7 @@ Resources:
       Handler: lib/main.handler
       Policies:
         - AmazonSSMReadOnlyAccess
-      Runtime: nodejs14.x
+      Runtime: nodejs16.x
       Timeout: 60
       Tracing: Active
 
@@ -108,7 +108,7 @@ Resources:
       Handler: lib/main.handler
       Policies:
         - AmazonSSMReadOnlyAccess
-      Runtime: nodejs14.x
+      Runtime: nodejs16.x
       Timeout: 60
       Tracing: Active
 
@@ -136,7 +136,7 @@ Resources:
             - iam:CreateAccessKey
             - iam:GetAccessKeyLastUsed
             Resource: '*'
-      Runtime: nodejs14.x
+      Runtime: nodejs16.x
       Timeout: 60
       Tracing: Active
 

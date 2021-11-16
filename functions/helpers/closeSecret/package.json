@@ -14,30 +14,30 @@
   "license": "ISC",
   "devDependencies": {
     "@tsconfig/node14": "^1.0.1",
-    "@types/aws-lambda": "^8.10.82",
+    "@types/aws-lambda": "^8.10.85",
     "@types/ip": "^1.1.0",
     "@types/json-schema": "^7.0.9",
-    "@types/node": "^16.6.1",
-    "@typescript-eslint/eslint-plugin": "^4.29.2",
-    "@typescript-eslint/parser": "^4.29.2",
-    "eslint": "^7.32.0",
+    "@types/node": "^16.11.7",
+    "@typescript-eslint/eslint-plugin": "^5.4.0",
+    "@typescript-eslint/parser": "^5.4.0",
+    "eslint": "^8.2.0",
     "eslint-config-prettier": "^8.3.0",
-    "eslint-plugin-prettier": "^3.4.0",
-    "prettier": "^2.3.2",
-    "ts-node": "^10.2.0",
+    "eslint-plugin-prettier": "^4.0.0",
+    "prettier": "^2.4.1",
+    "ts-node": "^10.4.0",
     "tslib": "^2.3.1",
-    "typescript": "^4.3.5"
+    "typescript": "^4.4.4"
   },
   "engines": {
-    "node": "14"
+    "node": "16"
   },
   "repository": {
     "type": "git",
     "url": "https://github.com/NickLiffen/GSSAR"
   },
   "dependencies": {
-    "@aws-sdk/client-ssm": "^3.26.0",
-    "@octokit/auth-app": "^3.6.0",
-    "@octokit/webhooks-types": "^4.3.1"
+    "@aws-sdk/client-ssm": "^3.41.0",
+    "@octokit/auth-app": "^3.6.1",
+    "@octokit/webhooks-types": "^4.14.0"
   }
 }

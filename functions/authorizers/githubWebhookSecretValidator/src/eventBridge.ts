@@ -8,8 +8,6 @@ import {
 import { APIGatewayProxyEventV2 } from "aws-lambda";
 
 export const put = async (event: APIGatewayProxyEventV2): Promise<number> => {
-
-
   try {
     const client = new EventBridgeClient({
       region: process.env.REGION,
