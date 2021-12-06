@@ -35,39 +35,39 @@ jobs:
       - name: Install and Build Function (GithubWebhookIPValidator)
         run: |
           cd ./functions/authorizers/githubWebhookIPValidator 
-          npm cache clean --force
-          npm install
-          npm run build
+          yarn cache clean --force
+          yarn install --frozen-lockfile
+          yarn run build
       - name: Install and Build Function (GithubWebhookSecretValidator)
         run: |
           cd ./functions/authorizers/githubWebhookSecretValidator 
-          npm cache clean --force
-          npm install
-          npm run build
+          yarn cache clean --force
+          yarn install --frozen-lockfile
+          yarn run build
       - name: Install and Build Function (GetSecretDetails)
         run: |
           cd ./functions/helpers/getSecretDetails
-          npm cache clean --force
-          npm install
-          npm run build
+          yarn cache clean --force
+          yarn install --frozen-lockfile
+          yarn run build
       - name: Install and Build Function (CloseSecret)
         run: |
           cd ./functions/helpers/closeSecret
-          npm cache clean --force
-          npm install
-          npm run build
+          yarn cache clean --force
+          yarn install --frozen-lockfile
+          yarn run build
       - name: Install and Build Function (GithubIssueNotifier)
         run: |
           cd ./functions/helpers/githubIssueNotifier 
-          npm cache clean --force
-          npm install
-          npm run build
+          yarn cache clean --force
+          yarn install --frozen-lockfile
+          yarn run build
       - name: Install and Build Function (RemediateAWSAccessKey)
         run: |
           cd ./functions/remediators/remediateAWSAccessKey 
-          npm cache clean --force
-          npm install
-          npm run build
+          yarn cache clean --force
+          yarn install --frozen-lockfile
+          yarn run build
       - name: SAM Build
         run: sam build --use-container
       - name: SAM Deploy
