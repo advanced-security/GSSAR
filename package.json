@@ -9,6 +9,8 @@
     "lint-check": "npx eslint '**/*.{ts,json}'",
     "lint-write": "npx eslint --fix '**/*.{ts,json}'",
     "cfn-check": "cfn-lint -t ./template.yml",
+    "check": "yarn run prettier-check && yarn run lint-check && yarn run cfn-check",
+    "write": "yarn run prettier-write && yarn run lint-write",
     "codespace-setup": ".devcontainer/setup.sh"
   },
   "repository": {

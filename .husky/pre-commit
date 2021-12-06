@@ -1,3 +1,1 @@
-yarn run prettier-check
-yarn run lint-check
-yarn run cfn-check
+yarn run check

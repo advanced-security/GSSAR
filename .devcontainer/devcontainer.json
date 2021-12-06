@@ -14,7 +14,7 @@
     "github.copilot",
     "donjayamanne.githistory",
     "nixon.env-cmd-file-syntax"
-  ],  
+  ],
   "postCreateCommand": "yarn install --frozen-lockfile && yarn run codespace-setup",
   "remoteUser": "root"
 }
