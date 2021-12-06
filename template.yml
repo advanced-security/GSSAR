@@ -9,11 +9,14 @@ Resources:
 
   HttpApiAccessLogs:
     Type: "AWS::Logs::LogGroup"
+    Properties:
+      RetentionInDays: 7
 
   SecretScannerStateMachineLogGroup:
     Type: AWS::Logs::LogGroup
     Properties:
       RetentionInDays: 7
+      LogGroupName: /aws/vendedlogs/gssar
 
   ### Lambda Functions ###
 
