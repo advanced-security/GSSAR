@@ -1,5 +1,5 @@
 name: Deploying GSSAR
-'on':
+"on":
   push:
     branches:
       - main
@@ -19,55 +19,55 @@ jobs:
       - name: Setup NodeJS
         uses: actions/setup-node@v2
         with:
-          node-version: '16'
+          node-version: "16"
       - name: Setup Python
         uses: actions/setup-python@v2
         with:
-          python-version: '3.8'
+          python-version: "3.8"
       - name: Setup AWS SAM
         uses: aws-actions/setup-sam@v1
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
-          aws-access-key-id: '${{ secrets.AWS_ACCESS_KEY_ID }}'
-          aws-secret-access-key: '${{ secrets.AWS_SECRET_ACCESS_KEY }}'
-          aws-region: '${{ env.REGION }}'
+          aws-access-key-id: "${{ secrets.AWS_ACCESS_KEY_ID }}"
+          aws-secret-access-key: "${{ secrets.AWS_SECRET_ACCESS_KEY }}"
+          aws-region: "${{ env.REGION }}"
       - name: Install and Build Function (GithubWebhookIPValidator)
         run: |
           cd ./functions/authorizers/githubWebhookIPValidator 
-          npm cache clean --force
-          npm install
-          npm run build
+          yarn cache clean --force
+          yarn install --frozen-lockfile
+          yarn run build
       - name: Install and Build Function (GithubWebhookSecretValidator)
         run: |
           cd ./functions/authorizers/githubWebhookSecretValidator 
-          npm cache clean --force
-          npm install
-          npm run build
+          yarn cache clean --force
+          yarn install --frozen-lockfile
+          yarn run build
       - name: Install and Build Function (GetSecretDetails)
         run: |
           cd ./functions/helpers/getSecretDetails
-          npm cache clean --force
-          npm install
-          npm run build
+          yarn cache clean --force
+          yarn install --frozen-lockfile
+          yarn run build
       - name: Install and Build Function (CloseSecret)
         run: |
           cd ./functions/helpers/closeSecret
-          npm cache clean --force
-          npm install
-          npm run build
+          yarn cache clean --force
+          yarn install --frozen-lockfile
+          yarn run build
       - name: Install and Build Function (GithubIssueNotifier)
         run: |
           cd ./functions/helpers/githubIssueNotifier 
-          npm cache clean --force
-          npm install
-          npm run build
+          yarn cache clean --force
+          yarn install --frozen-lockfile
+          yarn run build
       - name: Install and Build Function (RemediateAWSAccessKey)
         run: |
           cd ./functions/remediators/remediateAWSAccessKey 
-          npm cache clean --force
-          npm install
-          npm run build
+          yarn cache clean --force
+          yarn install --frozen-lockfile
+          yarn run build
       - name: SAM Build
         run: sam build --use-container
       - name: SAM Deploy
