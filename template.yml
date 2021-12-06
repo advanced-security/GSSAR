@@ -5,20 +5,6 @@ Description: >
   GitHub Secret Scanner Auto Remediator (GSSAR)
 
 Resources:
-  ### Log Groups ###
-
-  HttpApiAccessLogs:
-    Type: "AWS::Logs::LogGroup"
-    Properties:
-      RetentionInDays: 7
-      LogGroupName: /aws/vendedlogs/gssarAPI
-
-  SecretScannerStateMachineLogGroup:
-    Type: AWS::Logs::LogGroup
-    Properties:
-      RetentionInDays: 7
-      LogGroupName: /aws/vendedlogs/gssarSF
-
   ### Lambda Functions ###
 
   ## Authorizers
@@ -155,14 +141,6 @@ Resources:
   HttpApi:
     Type: AWS::Serverless::HttpApi
     Properties:
-      AccessLogSettings:
-        DestinationArn: !GetAtt HttpApiAccessLogs.Arn
-        Format: >-
-          { "requestId":"$context.requestId","ip": "$context.identity.sourceIp",
-          "requestTime":"$context.requestTime","httpMethod":"$context.httpMethod",
-          "routeKey":"$context.routeKey","status":"$context.status",
-          "protocol":"$context.protocol","responseLength":"$context.responseLength",
-          "error" : $context.authorizer.error }
       FailOnWarnings: True
       RouteSettings:
         "POST /github/webhook/validate":
@@ -253,12 +231,6 @@ Resources:
                 - custom.kickOffSecretScanRemediation
               detail-type:
                 - transaction
-      Logging:
-        Destinations:
-          - CloudWatchLogsLogGroup:
-              LogGroupArn: !GetAtt SecretScannerStateMachineLogGroup.Arn
-        IncludeExecutionData: true
-        Level: ALL
       Policies:
         - LambdaInvokePolicy:
             FunctionName: !Ref GitHubWebhookSecretValidator
