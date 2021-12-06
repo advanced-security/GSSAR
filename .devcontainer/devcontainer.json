@@ -1,19 +1,19 @@
 {
-  "name": "nickliffen/gssar",
-  "image": "ghcr.io/nickliffen/csenv:main",
-  "settings": {},
-  "extensions": [
-    "dbaeumer.vscode-eslint",
-    "hookyqr.beautify",
-    "naumovs.color-highlight",
-    "redhat.vscode-yaml",
-    "vscode-icons-team.vscode-icons",
-    "wayou.vscode-todo-highlight",
-    "esbenp.prettier-vscode",
-    "ms-vscode.vscode-typescript-next",
-    "github.copilot",
-    "donjayamanne.githistory",
-    "nixon.env-cmd-file-syntax"
-  ],
-  "remoteUser": "node"
-}
+    "name": "nickliffen/ghas-enablement",
+    "image": "ghcr.io/nickliffen/csenv:main",
+    "settings": {},
+    "extensions": [
+      "dbaeumer.vscode-eslint",
+      "hookyqr.beautify",
+      "naumovs.color-highlight",
+      "redhat.vscode-yaml",
+      "vscode-icons-team.vscode-icons",
+      "wayou.vscode-todo-highlight",
+      "esbenp.prettier-vscode",
+      "ms-vscode.vscode-typescript-next",
+      "github.copilot",
+      "donjayamanne.githistory",
+      "nixon.env-cmd-file-syntax"
+    ],
+    "remoteUser": "root"
+  }
