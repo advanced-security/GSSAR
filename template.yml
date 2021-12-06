@@ -11,12 +11,13 @@ Resources:
     Type: "AWS::Logs::LogGroup"
     Properties:
       RetentionInDays: 7
+      LogGroupName: /aws/vendedlogs/gssarAPI
 
   SecretScannerStateMachineLogGroup:
     Type: AWS::Logs::LogGroup
     Properties:
       RetentionInDays: 7
-      LogGroupName: /aws/vendedlogs/gssar
+      LogGroupName: /aws/vendedlogs/gssarSF
 
   ### Lambda Functions ###
 
