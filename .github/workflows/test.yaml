@@ -1,5 +1,5 @@
 name: Testing GSSAR
-'on':
+"on":
   push:
     branches:
       - main

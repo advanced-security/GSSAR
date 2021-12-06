@@ -3,11 +3,7 @@
   "version": "1.0.0",
   "description": "Lambda which gets further information on a GitHub Secret",
   "scripts": {
-    "build": "npx tsc",
-    "format": "npx prettier --write '**/*.ts'",
-    "format-check": "npx prettier --check '**/*.ts'",
-    "lint": "npx eslint . --ext .ts",
-    "lint-fix": "npx eslint --fix . --ext .ts"
+    "build": "npx tsc"
   },
   "keywords": [],
   "author": "",

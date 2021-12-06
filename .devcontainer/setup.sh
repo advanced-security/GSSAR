@@ -5,19 +5,19 @@ function setup {
         [ -L "${d%/}" ] && continue
         echo "Processing $d"
         cd "$d"
-        npm install
-        npm run format
-        npm run build
+        yarn 
         cd ..
     done
 }
 
-cd /workspaces/GCSMTTR/functions/helpers
+cd /workspaces/GSSAR/functions/helpers
 
 setup
 
-cd /workspaces/GCSMTTR/functions/authorizers
+cd /workspaces/GSSAR/functions/authorizers
 
 setup
 
-cd /workspaces/GCSMTTR/functions/remediators
+cd /workspaces/GSSAR/functions/remediators
+
+setup
