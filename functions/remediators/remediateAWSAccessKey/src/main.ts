@@ -16,6 +16,8 @@ export const handler = async (
 
     if (status !== 200) throw Error(message);
 
+    console.log(process.env);
+
     const result = (await checkIFSecretIsInAccount(event, message)) as response;
 
     if (result.status !== 200) throw Error(result.message);
