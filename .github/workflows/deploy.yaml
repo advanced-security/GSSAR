@@ -68,6 +68,12 @@ jobs:
           yarn cache clean --force
           yarn install --frozen-lockfile
           yarn run build
+      - name: Install and Build Function (RemediateGoogleAPIKey)
+        run: |
+          cd ./functions/remediators/remediateGoogleAPIKey 
+          yarn cache clean --force
+          yarn install --frozen-lockfile
+          yarn run build
       - name: SAM Build
         run: sam build --use-container
       - name: SAM Deploy
