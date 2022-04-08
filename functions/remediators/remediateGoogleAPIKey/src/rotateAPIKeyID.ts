@@ -3,7 +3,7 @@ import { google } from "googleapis";
 //   https://console.developers.google.com/apis/api/apikeys.googleapis.com
 const apikeys = google.apikeys("v2");
 
-export const rotateAPIKeyID = async (APIKeyID: string): Promise<void> => {
+export const rotateAPIKeyID = async (APIKeyIDPath: string): Promise<void> => {
   const credentials: string = process.env
     .GOOGLE_APPLICATION_CREDENTIALS as string;
 
@@ -20,26 +20,22 @@ export const rotateAPIKeyID = async (APIKeyID: string): Promise<void> => {
     google.options({ auth: authClient });
 
     const data = await apikeys.projects.locations.keys.get({
-      name: APIKeyID,
+      name: APIKeyIDPath,
     });
 
-    const parentID = APIKeyID.substring(0, APIKeyID.indexOf("/keys"));
+    const parentID = APIKeyIDPath.substring(0, APIKeyIDPath.indexOf("/keys"));
+    const keyID = APIKeyIDPath.substring(data.data.name.lastIndexOf("/")+1);    
     console.log("parentID", parentID);
+    console.log("keyID", keyID);    
     console.log("current key", data);
 
     const newKey = await apikeys.projects.locations.keys.create({
-      keyId: APIKeyID,
+      keyId: keyID,
       parent: parentID,
       requestBody: {},
     });
 
     console.log("new key", newKey);
-
-    // Do the magic
-    await apikeys.projects.locations.keys.delete({
-      // Required. The resource name of the API key to be deleted.
-      name: APIKeyID,
-    });
   } catch (err) {
     console.error("Error within function (rotateAPIKeyID)", err);
     throw err;
