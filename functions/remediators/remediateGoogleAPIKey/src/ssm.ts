@@ -1,7 +1,7 @@
 import { SSMClient, GetParametersByPathCommand } from "@aws-sdk/client-ssm";
 
 export const ssm = async (): Promise<void> => {
-  const region = process.env.LOCATION ? process.env.LOCATION : "global";
+  const region = process.env.REGION ? process.env.REGION : "us-east-1";
   const client = new SSMClient({ region });
   const command = new GetParametersByPathCommand({
     Path: "/gssar",
