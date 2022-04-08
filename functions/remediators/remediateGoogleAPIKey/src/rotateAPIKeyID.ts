@@ -24,7 +24,7 @@ export const rotateAPIKeyID = async (APIKeyIDPath: string): Promise<void> => {
     });
 
     const parentID = APIKeyIDPath.substring(0, APIKeyIDPath.indexOf("/keys"));
-    const keyID = APIKeyIDPath.substring(data.data.name.lastIndexOf("/")+1);    
+    const keyID = APIKeyIDPath.substring(APIKeyIDPath.lastIndexOf("/")+1);    
     console.log("parentID", parentID);
     console.log("keyID", keyID);    
     console.log("current key", data);
