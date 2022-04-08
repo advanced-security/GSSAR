@@ -11,8 +11,7 @@ export const rotateAPIKeyID = async (APIKeyID: string): Promise<void> => {
     const auth = new google.auth.GoogleAuth({
       credentials: JSON.parse(credentials),
       scopes: [
-        "https://www.googleapis.com/auth/cloud-platform",
-        "https://www.googleapis.com/auth/cloud-platform.read-only",
+        "https://www.googleapis.com/auth/cloud-platform"
       ],
     });
 
@@ -24,9 +23,13 @@ export const rotateAPIKeyID = async (APIKeyID: string): Promise<void> => {
       name: APIKeyID,
     });
 
+    const parentID = APIKeyID.substring(0, APIKeyID.indexOf("/keys"));
+    console.log("parentID", parentID);
     console.log("current key", data);
 
     const newKey = await apikeys.projects.locations.keys.create({
+      keyId: APIKeyID,
+      parent: parentID,
       requestBody: {},
     });
 
