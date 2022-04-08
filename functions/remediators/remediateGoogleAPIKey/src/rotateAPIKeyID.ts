@@ -28,7 +28,6 @@ export const rotateAPIKeyID = async (APIKeyIDPath: string): Promise<void> => {
     console.log("current key", data);
 
     const newKey = await apikeys.projects.locations.keys.create({
-      keyID: "_ROTATED",
       parent: parentID,
       requestBody: data,
     });
