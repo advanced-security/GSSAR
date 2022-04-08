@@ -24,16 +24,12 @@ export const getAPIKeyIDOfSecret = async ({
     const res = await apikeys.keys.lookupKey({
       keyString: secret,
     });
-    console.log(`response back from apikeys.keys.lookupKey`, res);
-    console.log("res.data", res.data);
-    console.log("res.config", res.config);
-    console.log("res.config", res.request);
 
     if (!res.data.name)
       return {
         status: 404,
         message:
-          "Google API Key Discovered within Secret Scanning Alert Not Found Within List Of API Keys in this Acconunt ",
+          "Google API Key Discovered within Secret Scanning Alert Not Found Within List Of API Keys in this Account ",
       };
 
     return { status: 200, message: res.data.name as string };

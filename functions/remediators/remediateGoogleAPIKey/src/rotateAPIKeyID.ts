@@ -24,11 +24,6 @@ export const rotateAPIKeyID = async (APIKeyIDPath: string): Promise<void> => {
     });
 
     const parentID = APIKeyIDPath.substring(0, APIKeyIDPath.indexOf("/keys"));
-    console.log("parentID", parentID);
-    console.log("current key", data);
-    console.log("data.data.displayName", data.data.displayName); 
-    console.log("data.data.restrictions", data.data.restrictions);     
-
 
 // Create new Key object
     const newKeyContents = {
@@ -41,9 +36,7 @@ export const rotateAPIKeyID = async (APIKeyIDPath: string): Promise<void> => {
       requestBody: newKeyContents,
     });
 
-    console.log("new key", newKey);
-
-    // Do the magic
+    // Delete the old key
     await apikeys.projects.locations.keys.delete({
       // Required. The resource name of the API key to be deleted.
       name: APIKeyIDPath,
