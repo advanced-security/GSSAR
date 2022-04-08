@@ -28,11 +28,18 @@ export const rotateAPIKeyID = async (APIKeyIDPath: string): Promise<void> => {
     console.log("current key", data);
 
     const newKey = await apikeys.projects.locations.keys.create({
+      keyID: "_ROTATED",
       parent: parentID,
-      requestBody: {},
+      requestBody: data,
     });
 
     console.log("new key", newKey);
+
+    // Do the magic
+    await apikeys.projects.locations.keys.delete({
+      // Required. The resource name of the API key to be deleted.
+      name: APIKeyIDPath,
+    });    
   } catch (err) {
     console.error("Error within function (rotateAPIKeyID)", err);
     throw err;
