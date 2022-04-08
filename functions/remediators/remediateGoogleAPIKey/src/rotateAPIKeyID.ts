@@ -20,12 +20,17 @@ export const rotateAPIKeyID = async (APIKeyID: string): Promise<void> => {
     const authClient = await auth.getClient();
     google.options({ auth: authClient });
 
-    await apikeys.projects.locations.keys.clone({
-      // Required. The resource name of the API key to be cloned in the same project.
+    const data = await apikeys.projects.locations.keys.get({
       name: APIKeyID,
-      // Request body metadata
+    });
+
+    console.log("current key", data);
+
+    const newKey = await apikeys.projects.locations.keys.create({
       requestBody: {},
     });
+
+    console.log("new key", newKey);
 
     // Do the magic
     await apikeys.projects.locations.keys.delete({

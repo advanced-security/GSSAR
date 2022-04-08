@@ -24,6 +24,10 @@ export const getAPIKeyIDOfSecret = async ({
     const res = await apikeys.keys.lookupKey({
       keyString: secret,
     });
+    console.log(`response back from apikeys.keys.lookupKey`, res);
+    console.log("res.data", res.data);
+    console.log("res.config", res.config);
+    console.log("res.config", res.request);
 
     if (!res.data.name)
       return {
