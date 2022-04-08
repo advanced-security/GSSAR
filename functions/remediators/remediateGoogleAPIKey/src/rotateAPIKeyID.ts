@@ -34,7 +34,7 @@ export const rotateAPIKeyID = async (APIKeyIDPath: string): Promise<void> => {
     const newKeyContents = {
       displayName: data.data.displayName,
       restrictions: data.data.restrictions,      
-    } as google.apikeys.v2.Schema$Key;
+    };
 
     const newKey = await apikeys.projects.locations.keys.create({
       parent: parentID,
