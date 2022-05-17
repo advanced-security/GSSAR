@@ -129,6 +129,32 @@ Resources:
       Timeout: 60
       Tracing: Active
 
+  RemediateGoogleAPIKey:
+    Type: "AWS::Serverless::Function"
+    Properties:
+      CodeUri: functions/remediators/remediateGoogleAPIKey
+      Description: "A Lambda that remediates Google API Keys"
+      Environment:
+        Variables:
+          NODE_ENV: Production
+          LOCATION: global
+      Handler: lib/main.handler
+      Policies:
+        - AmazonSSMReadOnlyAccess
+        - Statement:
+            - Sid: IAMGet
+              Effect: Allow
+              Action:
+                - iam:ListAccessKeys
+                - iam:UpdateAccessKey
+                - iam:DeleteAccessKey
+                - iam:CreateAccessKey
+                - iam:GetAccessKeyLastUsed
+              Resource: "*"
+      Runtime: nodejs14.x
+      Timeout: 60
+      Tracing: Active
+
   ### Event Bus ###
 
   GSSAREventBus:
@@ -212,6 +238,7 @@ Resources:
       DefinitionSubstitutions:
         GitHubWebhookSecretValidatorFunctionArn: !GetAtt GitHubWebhookSecretValidator.Arn
         RemediateAWSAccessKeyFunctionArn: !GetAtt RemediateAWSAccessKey.Arn
+        RemediateGoogleAPIKeyFunctionArn: !GetAtt RemediateGoogleAPIKey.Arn
         GetSecretDetailsFunctionArn: !GetAtt GetSecretDetails.Arn
         GitHubIssueNotifierFunctionArn: !GetAtt GitHubIssueNotifier.Arn
         CloseSecretFunctionArn: !GetAtt CloseSecret.Arn
@@ -236,6 +263,8 @@ Resources:
             FunctionName: !Ref GitHubWebhookSecretValidator
         - LambdaInvokePolicy:
             FunctionName: !Ref RemediateAWSAccessKey
+        - LambdaInvokePolicy:
+            FunctionName: !Ref RemediateGoogleAPIKey
         - LambdaInvokePolicy:
             FunctionName: !Ref GetSecretDetails
         - LambdaInvokePolicy:

@@ -7,6 +7,7 @@ name: Deploying GSSAR
       - bug/**
       - hotfix/**
       - release/**
+      - adding-google-api-keys
 jobs:
   DeployStack:
     runs-on: ubuntu-latest
@@ -65,6 +66,12 @@ jobs:
       - name: Install and Build Function (RemediateAWSAccessKey)
         run: |
           cd ./functions/remediators/remediateAWSAccessKey 
+          yarn cache clean --force
+          yarn install --frozen-lockfile
+          yarn run build
+      - name: Install and Build Function (RemediateGoogleAPIKey)
+        run: |
+          cd ./functions/remediators/remediateGoogleAPIKey 
           yarn cache clean --force
           yarn install --frozen-lockfile
           yarn run build
