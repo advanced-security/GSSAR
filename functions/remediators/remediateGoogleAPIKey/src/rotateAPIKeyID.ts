@@ -10,9 +10,7 @@ export const rotateAPIKeyID = async (APIKeyIDPath: string): Promise<void> => {
   try {
     const auth = new google.auth.GoogleAuth({
       credentials: JSON.parse(credentials),
-      scopes: [
-        "https://www.googleapis.com/auth/cloud-platform"
-      ],
+      scopes: ["https://www.googleapis.com/auth/cloud-platform"],
     });
 
     // Acquire an auth client, and bind it to all future calls
@@ -25,10 +23,10 @@ export const rotateAPIKeyID = async (APIKeyIDPath: string): Promise<void> => {
 
     const parentID = APIKeyIDPath.substring(0, APIKeyIDPath.indexOf("/keys"));
 
-// Create new Key object
+    // Create new Key object
     const newKeyContents = {
       displayName: data.data.displayName,
-      restrictions: data.data.restrictions,      
+      restrictions: data.data.restrictions,
     };
 
     await apikeys.projects.locations.keys.create({
@@ -40,7 +38,7 @@ export const rotateAPIKeyID = async (APIKeyIDPath: string): Promise<void> => {
     await apikeys.projects.locations.keys.delete({
       // Required. The resource name of the API key to be deleted.
       name: APIKeyIDPath,
-    });    
+    });
   } catch (err) {
     console.error("Error within function (rotateAPIKeyID)", err);
     throw err;
