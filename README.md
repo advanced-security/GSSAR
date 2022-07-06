@@ -10,7 +10,7 @@ Welcome to the GSSAR Product! :wave:
   - [Technical](#technical)
 - [Design](#design)
   - [Design Overview](#design-overview)
-  - [Technoligies Used](#technoligies-used)
+  - [Technologies Used](#technoligies-used)
 - [Pre-Reqs](#pre-reqs)
 - [Initial Installation](#initial-installation)
   - [Step One: Create IAM User](#step-one-create-iam-user)
@@ -71,7 +71,7 @@ There would need to be three remediators. One for Dropbox Access Tokens, one for
 
 The rest of the state machine (outside of remediators) is secret type agnostic. Meaning it will work for any current and future secret types. It is worth understanding how the rest of the design works, but you do not directly need to edit ot change anything outside of the remediators.
 
-### Technoligies Used
+### Technologies Used
 
 The following technologies are used throughout this solution:
 
@@ -111,7 +111,7 @@ Create an [IAM User](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_users_c
 - CRUD access over S3 Resources.
 - CRUD access over IAM Resources.
 - CRUD access over API Gateway Resources.
-- CRUD acess over Lambda Resources.
+- CRUD access over Lambda Resources.
 - CRUD access over CloudWatch Resources.
 - CRUD access over Step Functions
 
@@ -174,7 +174,7 @@ If the above is complete, pull the contents of this codebase and push it into th
 GitHub Actions should now trigger! You can watch the workflow within the Actions tab of your repository, but what it is doing is:
 
 - Linting
-- Building (Typescript -> Javascript)
+- Building (TypeScript -> JavaScript)
 - Building (SAM)
 - Deploying (SAM)
 
@@ -227,11 +227,11 @@ On the success of remediation, return the same payload to the state machine that
 
 ## Issues and Feedback
 
-If you find any issues, or have any feedback regarding this initative, please open an [issue](https://github.com/NickLiffen/GSSAR/issues/new) on this repository.
+If you find any issues, or have any feedback regarding this initiative, please open an [issue](https://github.com/NickLiffen/GSSAR/issues/new) on this repository.
 
 ## Contributing
 
-Please open an issue and let's discuss your thoughts on what can be made better. Then feel free to raise a pull request on this repository. This initative welcomes feedback from the community!
+Please open an issue and let's discuss your thoughts on what can be made better. Then feel free to raise a pull request on this repository. This initiative welcomes feedback from the community!
 
 ## FAQ's
 
@@ -239,7 +239,7 @@ Please open an issue and let's discuss your thoughts on what can be made better.
 
 Not a problem. The reason why AWS was chosen is due to the market popularity. However, we understand that not every company has AWS. The codebase will require some reconfiguration to meet whatever requirements your cloud/hosting provider has. The codebase structure can stay the same; you will likely have to change the `template.yml`, for example. However, a large part of the code within the `functions/*` directory can stay the same.
 
-I would advise if you don't use AWS. Use this codebase as a reference. It is a great template to _copy and paste_ snippets from and put into your solution.
+If you don't use AWS, I advise that you use this codebase as a reference. It is a great template to _copy and paste_ snippets from and put into your solution.
 
 ### I don't use GitHub Actions!? How can I use this solution?
 
