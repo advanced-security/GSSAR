@@ -239,7 +239,7 @@ Please open an issue and let's discuss your thoughts on what can be made better.
 
 Not a problem. The reason why AWS was chosen is due to the market popularity. However, we understand that not every company has AWS. The codebase will require some reconfiguration to meet whatever requirements your cloud/hosting provider has. The codebase structure can stay the same; you will likely have to change the `template.yml`, for example. However, a large part of the code within the `functions/*` directory can stay the same.
 
-If you don't use AWS, I advise that you use this codebase as a reference. It is a great template to _copy and paste_ snippets from and put into your solution.
+If you don't use AWS, I would advise that you use this codebase as a reference. It is a great template to _copy and paste_ snippets from and put into your solution.
 
 ### I don't use GitHub Actions!? How can I use this solution?
 
