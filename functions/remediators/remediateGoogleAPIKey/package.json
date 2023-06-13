@@ -35,7 +35,7 @@
     "url": "https://github.com/advanced-securit/GSSAR"
   },
   "dependencies": {
-    "@aws-sdk/client-ssm": "^3.121.0",
+    "@aws-sdk/client-ssm": "^3.350.0",
     "googleapis": "^104.0.0"
   }
 }
