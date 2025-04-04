@@ -10,7 +10,7 @@ Welcome to the GSSAR Product! :wave:
   - [Technical](#technical)
 - [Design](#design)
   - [Design Overview](#design-overview)
-  - [Technologies Used](#technoligies-used)
+  - [Technologies Used](#technologies-used)
 - [Pre-Reqs](#pre-reqs)
 - [Initial Installation](#initial-installation)
   - [Step One: Create IAM User](#step-one-create-iam-user)
