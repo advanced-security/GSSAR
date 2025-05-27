@@ -23,7 +23,7 @@ export const handler = async (
     await revokeAccessKeyID(event, message);
 
     return event as InputFromStateMachine;
-  } catch (err: any) {
+  } catch (err) {
     console.error(err);
     throw err;
   }

@@ -7,7 +7,7 @@ export const handler = async (event: InputFromStateMachine): Promise<void> => {
     await ssm();
     const token = (await githubAuth()) as string;
     (await postIssue(token, event)) as void;
-  } catch (e: any) {
+  } catch (e) {
     console.error(e);
     throw e;
   }

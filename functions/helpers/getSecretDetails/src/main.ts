@@ -28,7 +28,7 @@ export const handler = async (
     )) as SecretDetailResponse;
     const response = { ...secret, number, name, login } as response;
     return response;
-  } catch (e: any) {
+  } catch (e) {
     console.error(e);
     throw e;
   }

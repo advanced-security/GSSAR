@@ -1,13 +1,7 @@
 import { cidrSubnet } from "ip";
 
 const findIP = (keys: string[], ipToCheck: string) => {
-  const even = (e: string) => {
-    return cidrSubnet(e).contains(ipToCheck);
-  };
-  const values = (a: any) => {
-    return a.some(even);
-  };
-  return keys.some(values);
+  return keys.some((cidr) => cidrSubnet(cidr).contains(ipToCheck));
 };
 
 export const checkIPs = async (
