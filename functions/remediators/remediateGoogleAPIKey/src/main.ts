@@ -16,7 +16,7 @@ export const handler = async (
     await rotateAPIKeyID(message);
 
     return event as InputFromStateMachine;
-  } catch (err: any) {
+  } catch (err) {
     console.error(err);
     throw err;
   }

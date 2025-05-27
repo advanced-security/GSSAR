@@ -11,7 +11,7 @@ export const handler = async (
     const token = (await githubAuth()) as string;
     (await closeSecret(event, token)) as void;
     return event as InputFromStateMachine;
-  } catch (e: any) {
+  } catch (e) {
     console.error(e);
     throw e;
   }
