@@ -1,4 +1,6 @@
 name: Deploying GSSAR
+permissions:
+  contents: read
 "on":
   push:
     branches:
