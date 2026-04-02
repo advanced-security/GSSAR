@@ -35,5 +35,11 @@
     "@aws-sdk/client-ssm": "^3.816.0",
     "@octokit/auth-app": "^8.0.1",
     "@octokit/webhooks-types": "^6.0.0"
+  },
+  "resolutions": {
+    "fast-xml-parser": "4.5.4"
+  },
+  "overrides": {
+    "fast-xml-parser": "4.5.4"
   }
 }
