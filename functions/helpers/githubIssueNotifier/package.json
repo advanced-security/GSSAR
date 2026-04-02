@@ -39,5 +39,8 @@
   },
   "overrides": {
     "fast-xml-parser": "4.5.5"
+  },
+  "resolutions": {
+    "fast-xml-parser": "4.5.5"
   }
 }
