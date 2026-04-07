@@ -41,6 +41,17 @@ resource deadLetterQueue 'Microsoft.Storage/storageAccounts/queueServices/queues
   name: '${storageAccount.name}/default/gssar-dead-letter-queue'
 }
 
+// Blob service and container for Event Grid dead-letter events
+resource blobService 'Microsoft.Storage/storageAccounts/blobServices@2023-01-01' = {
+  parent: storageAccount
+  name: 'default'
+}
+
+resource deadLetterContainer 'Microsoft.Storage/storageAccounts/blobServices/containers@2023-01-01' = {
+  parent: blobService
+  name: 'dead-letter-events'
+}
+
 // ============================================================================
 // Application Insights (equivalent to AWS CloudWatch for monitoring/tracing)
 // ============================================================================
@@ -144,7 +155,6 @@ resource functionApp 'Microsoft.Web/sites@2023-01-01' = {
     serverFarmId: appServicePlan.id
     httpsOnly: true
     siteConfig: {
-      nodeVersion: '~20'
       minTlsVersion: '1.2'
       appSettings: [
         {
