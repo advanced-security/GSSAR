@@ -38,5 +38,11 @@
     "@octokit/graphql": "^9.0.1",
     "@octokit/webhooks-methods": "^6.0.0",
     "ip": "^2.0.1"
+  },
+  "overrides": {
+    "fast-xml-parser": "4.5.5"
+  },
+  "resolutions": {
+    "fast-xml-parser": "4.5.5"
   }
 }
