@@ -37,9 +37,9 @@
     "@octokit/webhooks-types": "^6.0.0"
   },
   "resolutions": {
-    "fast-xml-parser": "4.5.4"
+    "fast-xml-parser": "5.5.10"
   },
   "overrides": {
-    "fast-xml-parser": "4.5.4"
+    "fast-xml-parser": "5.5.10"
   }
 }
