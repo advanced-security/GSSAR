@@ -1,7 +1,11 @@
-import { cidrSubnet } from "ip";
+import * as ipaddr from "ipaddr.js";
 
 const findIP = (keys: string[], ipToCheck: string) => {
-  return keys.some((cidr) => cidrSubnet(cidr).contains(ipToCheck));
+  const parsedIP = ipaddr.parse(ipToCheck);
+  return keys.some((cidr) => {
+    const [addr, prefixLength] = ipaddr.parseCIDR(cidr);
+    return parsedIP.match(addr, prefixLength);
+  });
 };
 
 export const checkIPs = async (
