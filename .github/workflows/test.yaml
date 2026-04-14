@@ -1,29 +1,65 @@
-name: Testing GSSAR
+name: CI
+permissions:
+  contents: read
 "on":
   push:
     branches:
       - main
-      - ft/**
-      - bug/**
-      - hotfix/**
-      - release/**
   pull_request:
     branches:
       - main
-      - ft/**
-      - bug/**
-      - hotfix/**
-      - release/**
 jobs:
-  LintCloudFormation:
-    permissions:
-      contents: read
+  lint-and-format:
+    name: Lint & Format Check
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
-      - name: Setup Cloud Formation Linter with Latest Version
+        uses: actions/checkout@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
+      - name: Run Prettier check
+        run: yarn run prettier-check
+      - name: Run ESLint check
+        run: yarn run lint-check
+
+  lint-cloudformation:
+    name: CloudFormation Lint
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup CloudFormation Linter
         uses: scottbrenner/cfn-lint-action@v2
-      - name: Print the Cloud Formation Linter Version & run Linter.
-        run: |
-          cfn-lint -t ./template.yml
+      - name: Run CloudFormation Linter
+        run: cfn-lint -t ./template.yml
+
+  build-functions:
+    name: Build ${{ matrix.function }}
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        function:
+          - functions/authorizers/githubWebhookIPValidator
+          - functions/authorizers/githubWebhookSecretValidator
+          - functions/helpers/getSecretDetails
+          - functions/helpers/closeSecret
+          - functions/helpers/githubIssueNotifier
+          - functions/remediators/remediateAWSAccessKey
+          - functions/remediators/remediateGoogleAPIKey
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - name: Install dependencies
+        working-directory: ${{ matrix.function }}
+        run: yarn install --frozen-lockfile
+      - name: Build
+        working-directory: ${{ matrix.function }}
+        run: yarn run build
