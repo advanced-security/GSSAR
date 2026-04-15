@@ -13,9 +13,8 @@ export const rotateAPIKeyID = async (APIKeyIDPath: string): Promise<void> => {
       scopes: ["https://www.googleapis.com/auth/cloud-platform"],
     });
 
-    // Acquire an auth client, and bind it to all future calls
-    const authClient = await auth.getClient();
-    google.options({ auth: authClient });
+    // Bind the auth object to all future calls
+    google.options({ auth });
 
     const data = await apikeys.projects.locations.keys.get({
       name: APIKeyIDPath,
