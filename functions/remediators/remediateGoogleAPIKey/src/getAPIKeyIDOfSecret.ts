@@ -18,8 +18,7 @@ export const getAPIKeyIDOfSecret = async ({
       ],
     });
 
-    const authClient = await auth.getClient();
-    google.options({ auth: authClient });
+    google.options({ auth });
 
     const res = await apikeys.keys.lookupKey({
       keyString: secret,
