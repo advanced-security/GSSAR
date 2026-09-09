@@ -2,6 +2,9 @@
 # Custom
 lib/
 file:/
+
+# Azure Bicep build artifacts
+azure/*.json
 # Logs
 logs
 *.log
